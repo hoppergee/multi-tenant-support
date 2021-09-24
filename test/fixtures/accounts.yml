@@ -1,0 +1,14 @@
+jack:
+  name: JACK
+  domain: jack.com
+  subdomain: jack
+
+william:
+  name: WILLIAM
+  domain: william.com
+  subdomain: william
+
+robin:
+  name: ROBIN
+  domain: robin.com
+  subdomain: robin
