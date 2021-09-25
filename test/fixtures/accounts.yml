@@ -1,14 +1,14 @@
-jack:
-  name: JACK
-  domain: jack.com
-  subdomain: jack
+beer_stark:
+  name: BeerStark
+  domain: beer-stark.com
+  subdomain: beerstark
 
-william:
-  name: WILLIAM
-  domain: william.com
-  subdomain: william
+fisher_mante:
+  name: FisherMante
+  domain: fisher-mante.com
+  subdomain: fishermante
 
-robin:
-  name: ROBIN
-  domain: robin.com
-  subdomain: robin
+kohler:
+  name: Kohler
+  domain: kohler.com
+  subdomain: kohler

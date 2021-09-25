@@ -3,29 +3,29 @@ require "test_helper"
 class CurrentTenantTest < ActionDispatch::IntegrationTest
 
   setup do
-    @william = accounts(:william)
+    @beer_stark = accounts(:beer_stark)
   end
 
-  test "find correct tenant with subdomain (i.e. subdomain.example.com)" do
-    host! "william.example.com"
+  test "find correct tenant with subdomain" do
+    host! "beerstark.example.com"
     get users_path
 
     assert_response :success
-    assert_select "#id", text: @william.id.to_s
-    assert_select "#name", text: "WILLIAM"
-    assert_select "#domain", text: "william.com"
-    assert_select "#subdomain", text: "william"
+    assert_select "#id", text: @beer_stark.id.to_s
+    assert_select "#name", text: "BeerStark"
+    assert_select "#domain", text: "beer-stark.com"
+    assert_select "#subdomain", text: "beerstark"
   end
 
-  test "find correct tenant with domain (i.e. william.com)" do
-    host! "william.com"
+  test "find correct tenant with domain" do
+    host! "beer-stark.com"
     get users_path
 
     assert_response :success
-    assert_select "#id", text: @william.id.to_s
-    assert_select "#name", text: "WILLIAM"
-    assert_select "#domain", text: "william.com"
-    assert_select "#subdomain", text: "william"
+    assert_select "#id", text: @beer_stark.id.to_s
+    assert_select "#name", text: "BeerStark"
+    assert_select "#domain", text: "beer-stark.com"
+    assert_select "#subdomain", text: "beerstark"
   end
 
 end
