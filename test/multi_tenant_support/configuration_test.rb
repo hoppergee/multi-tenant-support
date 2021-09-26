@@ -22,6 +22,15 @@ class MultiTenantSupport::ConfigurationTest < ActiveSupport::TestCase
     assert_equal :uuid, @configuration.primary_key
   end
 
+  test "#foreign_key and #foreign_key=" do
+    @configuration.tenant_account_class = 'Account'
+
+    assert_equal :account_id, @configuration.foreign_key
+
+    @configuration.foreign_key = :a_id
+    assert_equal :a_id, @configuration.foreign_key
+  end
+
   test "#excluded_models and #excluded_models=" do
     assert_equal [], @configuration.excluded_models
 

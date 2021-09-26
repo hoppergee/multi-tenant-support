@@ -2,6 +2,7 @@ module MultiTenantSupport
   class Configuration
     attr_writer :tenant_account_class,
                 :primary_key,
+                :foreign_key,
                 :excluded_models,
                 :excluded_subdomains,
                 :current_tenant_account_method,
@@ -26,6 +27,10 @@ module MultiTenantSupport
 
     def primary_key
       @primary_key ||= :id
+    end
+
+    def foreign_key
+      @foreign_key ||= "#{tenant_account_class.underscore}_id".to_sym
     end
 
     def host
