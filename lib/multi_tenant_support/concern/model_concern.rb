@@ -15,6 +15,10 @@ module MultiTenantSupport
         subdomain ? find_by(subdomain: subdomain) : find_by(domain: domain)
       end
 
+      def belongs_to_tenant(name, **options)
+        belongs_to name.to_sym, **options
+      end
+
     end
 
   end

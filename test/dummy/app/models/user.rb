@@ -1,3 +1,3 @@
 class User < ApplicationRecord
-  belongs_to :account
+  belongs_to_tenant :account
 end

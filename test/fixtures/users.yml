@@ -1,0 +1,14 @@
+jack:
+  name: jack
+  email: jack@test.com
+  account: beer_stark
+
+william:
+  name: william
+  email: william@test.com
+  account: fisher_mante
+
+robin:
+  name: robin
+  email: robin@test.com
+  account: kohler
