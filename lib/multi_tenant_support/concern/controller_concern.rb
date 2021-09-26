@@ -14,8 +14,7 @@ module MultiTenantSupport
       end
 
       def set_current_tenant_account
-        tenant_account_class = MultiTenantSupport.tenant_account_class
-        tenant_account = tenant_account_class.constantize.find_tenant_account(
+        tenant_account = MultiTenantSupport::FindTenantAccount.call(
           subdomains: request.subdomains,
           domain: request.domain
         )
