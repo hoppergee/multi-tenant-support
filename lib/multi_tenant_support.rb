@@ -25,4 +25,8 @@ module MultiTenantSupport
     configuration.current_tenant_account_method
   end
 
+  def current_tenant
+    Current.tenant_account
+  end
+
 end

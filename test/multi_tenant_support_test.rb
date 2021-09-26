@@ -25,4 +25,13 @@ class MultiTenantSupportTest < ActiveSupport::TestCase
     assert_equal 'example.com', configuration.host
   end
 
+  test ".tenant_account" do
+    MultiTenantSupport::Current.tenant_account = nil
+    assert MultiTenantSupport.current_tenant.nil?
+
+    fisher_mante = accounts(:fisher_mante)
+    MultiTenantSupport::Current.tenant_account = fisher_mante
+    assert_equal fisher_mante, MultiTenantSupport.current_tenant
+  end
+
 end
