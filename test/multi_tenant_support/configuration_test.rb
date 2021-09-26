@@ -31,13 +31,6 @@ class MultiTenantSupport::ConfigurationTest < ActiveSupport::TestCase
     assert_equal :a_id, @configuration.foreign_key
   end
 
-  test "#excluded_models and #excluded_models=" do
-    assert_equal [], @configuration.excluded_models
-
-    @configuration.excluded_models = ["Account"]
-    assert_equal ["Account"], @configuration.excluded_models
-  end
-
   test "#excluded_subdomains and #excluded_subdomains=" do
     assert_equal [], @configuration.excluded_subdomains
 
