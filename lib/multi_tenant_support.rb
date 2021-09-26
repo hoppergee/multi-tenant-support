@@ -29,4 +29,12 @@ module MultiTenantSupport
     Current.tenant_account
   end
 
+  def under_tenant(tenant_account, &block)
+    raise ArgumentError, "block is missing" if block.nil?
+
+    Current.set(tenant_account: tenant_account) do
+      yield
+    end
+  end
+
 end

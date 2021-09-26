@@ -34,4 +34,16 @@ class MultiTenantSupportTest < ActiveSupport::TestCase
     assert_equal fisher_mante, MultiTenantSupport.current_tenant
   end
 
+  test ".under_tenant" do
+    fisher_mante = accounts(:fisher_mante)
+    MultiTenantSupport::Current.tenant_account = fisher_mante
+   
+    beer_stark = accounts(:beer_stark)
+    MultiTenantSupport.under_tenant beer_stark do
+      assert_equal beer_stark, MultiTenantSupport.current_tenant
+    end
+
+    assert_equal fisher_mante, MultiTenantSupport.current_tenant
+  end
+
 end
