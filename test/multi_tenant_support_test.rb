@@ -14,7 +14,6 @@ class MultiTenantSupportTest < ActiveSupport::TestCase
       config.host = 'example.com'
     end
 
-    assert_equal 'Account', MultiTenantSupport.tenant_account_class
     assert_equal :current_tenant_account, MultiTenantSupport.current_tenant_account_method
 
     configuration = MultiTenantSupport.configuration

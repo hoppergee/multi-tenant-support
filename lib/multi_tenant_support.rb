@@ -17,10 +17,6 @@ module MultiTenantSupport
     @configuration ||= Configuration.new
   end
 
-  def tenant_account_class
-    configuration.tenant_account_class
-  end
-
   def current_tenant_account_method
     configuration.current_tenant_account_method
   end
