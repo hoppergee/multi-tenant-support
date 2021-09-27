@@ -33,6 +33,26 @@ module MultiTenantSupport
           raise MissingTenantError unless MultiTenantSupport.current_tenant
           raise InvalidTenantAccess if object.send(foreign_key) != MultiTenantSupport.current_tenant_id
         end
+
+        before_save do |object|
+          raise InvalidTenantAccess if object.send(foreign_key) != MultiTenantSupport.current_tenant_id
+        end
+
+        override_update_columns_module = Module.new {
+          define_method :update_columns do |attributes|
+            raise InvalidTenantAccess if send(foreign_key) != MultiTenantSupport.current_tenant_id
+
+            super(attributes)
+          end
+
+          define_method :update_column do |name, value|
+            raise InvalidTenantAccess if send(foreign_key) != MultiTenantSupport.current_tenant_id
+
+            super(name, value)
+          end
+        }
+
+        include override_update_columns_module
       end
 
       def set_tenant_account_readonly(tenant_name, foreign_key)

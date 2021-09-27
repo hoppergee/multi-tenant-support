@@ -121,4 +121,27 @@ class MultiTenantSupport::ModelConcernTest < ActiveSupport::TestCase
     end
   end
 
+  test "tenant's member model can only update when its tenant account match current tenant" do
+    jack = nil
+    MultiTenantSupport.under_tenant accounts(:beer_stark) do
+      jack = users(:jack)
+      jack.name = "jacky"
+    end
+
+    MultiTenantSupport.under_tenant accounts(:fisher_mante) do
+      assert_raise(MultiTenantSupport::InvalidTenantAccess) { jack.save }
+      assert_raise(MultiTenantSupport::InvalidTenantAccess) { jack.save! }
+      assert_raise(MultiTenantSupport::InvalidTenantAccess) { jack.save(validate: false) }
+      assert_raise(MultiTenantSupport::InvalidTenantAccess) { jack.update(name: 'jacky') }
+      assert_raise(MultiTenantSupport::InvalidTenantAccess) { jack.update_attribute(:name, 'jacky') }
+      assert_raise(MultiTenantSupport::InvalidTenantAccess) { jack.update_columns(name: 'jacky') }
+      assert_raise(MultiTenantSupport::InvalidTenantAccess) { jack.update_column(:name, 'jacky') }
+    end
+
+    MultiTenantSupport.under_tenant accounts(:beer_stark) do
+      jack.reload
+      assert_equal "jack", jack.name
+    end
+  end
+
 end
