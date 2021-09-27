@@ -34,15 +34,27 @@ module MultiTenantSupport
   end
 
   def default_scope_on?
-    Current.default_scope_on
+    !Current.default_scope_off
   end
 
-  def default_tenant_scope_on!
-    Current.default_tenant_scope_on = true
+  def turn_default_scope_on
+    if block_given?
+      Current.set(default_scope_off: false) do
+        yield
+      end
+    else
+      Current.default_scope_off = false
+    end
   end
 
-  def default_tenant_scope_off!
-    Current.default_tenant_scope_on = false
+  def turn_default_scope_off
+    if block_given?
+      Current.set(default_scope_off: true) do
+        yield
+      end
+    else
+      Current.default_scope_off = true
+    end
   end
 
 end

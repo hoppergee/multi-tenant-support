@@ -44,23 +44,45 @@ class MultiTenantSupportTest < ActiveSupport::TestCase
   end
 
   test '.default_scope_on?' do
-    MultiTenantSupport::Current.default_scope_on = nil
-    refute MultiTenantSupport.default_scope_on?
-
-    MultiTenantSupport::Current.default_scope_on = true
+    MultiTenantSupport::Current.default_scope_off = nil
     assert MultiTenantSupport.default_scope_on?
 
-    MultiTenantSupport::Current.default_scope_on = false
+    MultiTenantSupport::Current.default_scope_off = true
+    refute MultiTenantSupport.default_scope_on?
+
+    MultiTenantSupport::Current.default_scope_off = false
+    assert MultiTenantSupport.default_scope_on?
+  end
+
+  test ".turn_default_scope_on and .turn_default_scope_off" do
+    MultiTenantSupport::Current.default_scope_off = nil
+    MultiTenantSupport.turn_default_scope_on
+    assert MultiTenantSupport.default_scope_on?
+
+    MultiTenantSupport.turn_default_scope_off
     refute MultiTenantSupport.default_scope_on?
   end
 
-  test ".default_tenant_scope_on! and .default_tenant_scope_off!" do
-    MultiTenantSupport::Current.default_tenant_scope_on = nil
-    MultiTenantSupport.default_tenant_scope_on!
-    assert MultiTenantSupport.default_tenant_scope_on?
+  test ".turn_default_scope_on - accept block" do
+    MultiTenantSupport::Current.default_scope_off = true
+    refute MultiTenantSupport.default_scope_on?
 
-    MultiTenantSupport.default_tenant_scope_off!
-    refute MultiTenantSupport.default_tenant_scope_on?
+    MultiTenantSupport.turn_default_scope_on do
+      assert MultiTenantSupport.default_scope_on?
+    end
+
+    refute MultiTenantSupport.default_scope_on?
+  end
+
+  test ".turn_default_scope_off - accept block" do
+    MultiTenantSupport::Current.default_scope_off = false
+    assert MultiTenantSupport.default_scope_on?
+
+    MultiTenantSupport.turn_default_scope_off do
+      refute MultiTenantSupport.default_scope_on?
+    end
+
+    assert MultiTenantSupport.default_scope_on?
   end
 
 end
