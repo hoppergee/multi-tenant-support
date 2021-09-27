@@ -2,6 +2,10 @@ require 'test_helper'
 
 class MultiTenantSupport::ModelConcernTest < ActiveSupport::TestCase
 
+  setup do
+    MultiTenantSupport.turn_default_scope_on
+  end
+
   test '.belongs_to_tenant' do
     assert_equal accounts(:beer_stark), users(:jack).account
     assert_equal accounts(:fisher_mante), users(:william).account
@@ -9,15 +13,13 @@ class MultiTenantSupport::ModelConcernTest < ActiveSupport::TestCase
   end
 
   test '.belongs_to_tenant - set default scope to under current tenant when default scope is on' do
-    MultiTenantSupport.turn_default_scope_on do
-      MultiTenantSupport.under_tenant accounts(:beer_stark) do
-        assert_equal 1, User.count
-        assert_equal users(:jack), User.first
-        assert_equal users(:jack), User.last
-        kate = User.new(name: 'kate')
-        assert kate.save
-        assert_equal kate, User.where(name: 'kate').first
-      end
+    MultiTenantSupport.under_tenant accounts(:beer_stark) do
+      assert_equal 1, User.count
+      assert_equal users(:jack), User.first
+      assert_equal users(:jack), User.last
+      kate = User.new(name: 'kate')
+      assert kate.save
+      assert_equal kate, User.where(name: 'kate').first
     end
   end
 
@@ -39,15 +41,47 @@ class MultiTenantSupport::ModelConcernTest < ActiveSupport::TestCase
   end
 
   test "auto set tenant account on new and creation" do
-    MultiTenantSupport.turn_default_scope_on do
-      beer_stark = accounts(:beer_stark)
-      MultiTenantSupport.under_tenant beer_stark do
-        kate = User.new(name: 'kate')
-        assert_equal beer_stark, kate.account
-        assert kate.save
-        assert_equal beer_stark, kate.account
-      end
+    beer_stark = accounts(:beer_stark)
+    MultiTenantSupport.under_tenant beer_stark do
+      kate = User.new(name: 'kate')
+      assert_equal beer_stark, kate.account
+      assert kate.save
+      assert_equal beer_stark, kate.account
     end
+  end
+
+  test "make tenant account to be a readonly association" do
+    assert_raise(MultiTenantSupport::ImmutableTenantError) { users(:jack).account = accounts(:fisher_mante) }
+    assert_raise(MultiTenantSupport::ImmutableTenantError) { users(:jack).account_id = accounts(:fisher_mante).id }
+    assert_raise(MultiTenantSupport::ImmutableTenantError) { users(:jack).update(account: accounts(:fisher_mante)) }
+    assert_raise(MultiTenantSupport::ImmutableTenantError) { users(:jack).update(account_id: accounts(:fisher_mante).id) }
+    assert_raise(MultiTenantSupport::ImmutableTenantError) { users(:jack).update_attribute(:account, accounts(:fisher_mante)) }
+    assert_raise("account_id is marked as readonly") { users(:jack).update_attribute(:account_id, accounts(:fisher_mante).id) }
+    assert_raise("account_id is marked as readonly") { users(:jack).update_columns(account_id: accounts(:fisher_mante).id) }
+    assert_raise("account_id is marked as readonly") { users(:jack).update_column(:account_id, accounts(:fisher_mante).id) }
+
+    assert_raise("account_id is marked as readonly") { users(:jack).update_attribute(:account_id, nil) }
+    assert_raise("account_id is marked as readonly") { users(:jack).update_columns(account_id: nil) }
+    assert_raise("account_id is marked as readonly") { users(:jack).update_column(:account_id, nil) }
+  end
+
+  test "tenant account cannot be nil" do
+    assert_raise(MultiTenantSupport::NilTenantError) { users(:jack).account = nil }
+    assert_raise(MultiTenantSupport::NilTenantError) { users(:jack).account_id = nil }
+    assert_raise(MultiTenantSupport::NilTenantError) { users(:jack).update(account: nil) }
+    assert_raise(MultiTenantSupport::NilTenantError) { users(:jack).update(account_id: nil) }
+    assert_raise(MultiTenantSupport::NilTenantError) { users(:jack).update_attribute(:account, nil) }
+
+    MultiTenantSupport.under_tenant(accounts(:beer_stark)) do
+      user = User.new
+      assert_raise(MultiTenantSupport::NilTenantError) { user.account = nil }
+      assert_raise(MultiTenantSupport::NilTenantError) { user.account_id = nil }
+    end
+  end
+
+  test "tenant account binding object cannot be initialize when current tenant is nil" do
+    MultiTenantSupport::Current.tenant_account = nil
+    assert_raise(MultiTenantSupport::MissingTenantError) { User.new }
   end
 
 end

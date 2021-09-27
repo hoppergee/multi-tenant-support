@@ -9,6 +9,7 @@ module MultiTenantSupport
         belongs_to name.to_sym, **options
 
         set_default_scope_under_current_tenant(options[:foreign_key])
+        set_tenant_account_readonly(name, options[:foreign_key])
       end
 
       private
@@ -27,6 +28,36 @@ module MultiTenantSupport
         }
 
         scope :unscope_tenant, -> { unscope(where: foreign_key) }
+      end
+
+      def set_tenant_account_readonly(tenant_name, foreign_key)
+        readonly_tenant_module = Module.new {
+
+          define_method "#{tenant_name}=" do |tenant|
+            raise NilTenantError if tenant.nil?
+
+            if new_record? && tenant == MultiTenantSupport.current_tenant
+              super tenant
+            else
+              raise ImmutableTenantError
+            end
+          end
+
+          define_method "#{foreign_key}=" do |key|
+            raise NilTenantError if key.nil?
+
+            if new_record? && key == MultiTenantSupport.current_tenant_id
+              super key
+            else
+              raise ImmutableTenantError
+            end
+          end
+
+        }
+
+        include readonly_tenant_module
+
+        attr_readonly foreign_key
       end
 
     end

@@ -26,6 +26,10 @@ module MultiTenantSupport
     Current.tenant_account
   end
 
+  def current_tenant_id
+    Current.tenant_account.send(configuration.primary_key)
+  end
+
   def under_tenant(tenant_account, &block)
     raise ArgumentError, "block is missing" if block.nil?
 
