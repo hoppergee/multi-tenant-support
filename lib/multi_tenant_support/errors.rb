@@ -10,4 +10,7 @@ module MultiTenantSupport
 
   class NilTenantError < Error
   end
+
+  class InvalidTenantAccess < Error
+  end
 end

@@ -28,6 +28,11 @@ module MultiTenantSupport
         }
 
         scope :unscope_tenant, -> { unscope(where: foreign_key) }
+
+        after_initialize do |object|
+          raise MissingTenantError unless MultiTenantSupport.current_tenant
+          raise InvalidTenantAccess if object.send(foreign_key) != MultiTenantSupport.current_tenant_id
+        end
       end
 
       def set_tenant_account_readonly(tenant_name, foreign_key)

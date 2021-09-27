@@ -7,9 +7,37 @@ class MultiTenantSupport::ModelConcernTest < ActiveSupport::TestCase
   end
 
   test '.belongs_to_tenant' do
-    assert_equal accounts(:beer_stark), users(:jack).account
-    assert_equal accounts(:fisher_mante), users(:william).account
-    assert_equal accounts(:kohler), users(:robin).account
+    MultiTenantSupport.under_tenant accounts(:beer_stark) do
+      assert_equal accounts(:beer_stark), users(:jack).account
+    end
+
+    MultiTenantSupport.under_tenant accounts(:fisher_mante) do
+      assert_equal accounts(:fisher_mante), users(:william).account
+    end
+
+    MultiTenantSupport.under_tenant accounts(:kohler) do
+      assert_equal accounts(:kohler), users(:robin).account
+    end
+  end
+
+  test 'can only initialize under correct tenant' do
+    MultiTenantSupport.under_tenant accounts(:beer_stark) do
+      users(:jack)
+      assert_raise(MultiTenantSupport::InvalidTenantAccess) {  users(:william) }
+      assert_raise(MultiTenantSupport::InvalidTenantAccess) {  users(:robin) }
+    end
+
+    MultiTenantSupport.under_tenant accounts(:fisher_mante) do
+      assert_raise(MultiTenantSupport::InvalidTenantAccess) {  users(:jack).reload }
+      users(:william).reload
+      assert_raise(MultiTenantSupport::InvalidTenantAccess) {  users(:robin).reload }
+    end
+
+    MultiTenantSupport.under_tenant accounts(:kohler) do
+      assert_raise(MultiTenantSupport::InvalidTenantAccess) {  users(:jack).reload }
+      assert_raise(MultiTenantSupport::InvalidTenantAccess) {  users(:william).reload }
+      users(:robin).reload
+    end
   end
 
   test '.belongs_to_tenant - set default scope to under current tenant when default scope is on' do
@@ -51,28 +79,30 @@ class MultiTenantSupport::ModelConcernTest < ActiveSupport::TestCase
   end
 
   test "make tenant account to be a readonly association" do
-    assert_raise(MultiTenantSupport::ImmutableTenantError) { users(:jack).account = accounts(:fisher_mante) }
-    assert_raise(MultiTenantSupport::ImmutableTenantError) { users(:jack).account_id = accounts(:fisher_mante).id }
-    assert_raise(MultiTenantSupport::ImmutableTenantError) { users(:jack).update(account: accounts(:fisher_mante)) }
-    assert_raise(MultiTenantSupport::ImmutableTenantError) { users(:jack).update(account_id: accounts(:fisher_mante).id) }
-    assert_raise(MultiTenantSupport::ImmutableTenantError) { users(:jack).update_attribute(:account, accounts(:fisher_mante)) }
-    assert_raise("account_id is marked as readonly") { users(:jack).update_attribute(:account_id, accounts(:fisher_mante).id) }
-    assert_raise("account_id is marked as readonly") { users(:jack).update_columns(account_id: accounts(:fisher_mante).id) }
-    assert_raise("account_id is marked as readonly") { users(:jack).update_column(:account_id, accounts(:fisher_mante).id) }
+    MultiTenantSupport.under_tenant accounts(:beer_stark) do
+      assert_raise(MultiTenantSupport::ImmutableTenantError) { users(:jack).account = accounts(:fisher_mante) }
+      assert_raise(MultiTenantSupport::ImmutableTenantError) { users(:jack).account_id = accounts(:fisher_mante).id }
+      assert_raise(MultiTenantSupport::ImmutableTenantError) { users(:jack).update(account: accounts(:fisher_mante)) }
+      assert_raise(MultiTenantSupport::ImmutableTenantError) { users(:jack).update(account_id: accounts(:fisher_mante).id) }
+      assert_raise(MultiTenantSupport::ImmutableTenantError) { users(:jack).update_attribute(:account, accounts(:fisher_mante)) }
+      assert_raise("account_id is marked as readonly") { users(:jack).update_attribute(:account_id, accounts(:fisher_mante).id) }
+      assert_raise("account_id is marked as readonly") { users(:jack).update_columns(account_id: accounts(:fisher_mante).id) }
+      assert_raise("account_id is marked as readonly") { users(:jack).update_column(:account_id, accounts(:fisher_mante).id) }
 
-    assert_raise("account_id is marked as readonly") { users(:jack).update_attribute(:account_id, nil) }
-    assert_raise("account_id is marked as readonly") { users(:jack).update_columns(account_id: nil) }
-    assert_raise("account_id is marked as readonly") { users(:jack).update_column(:account_id, nil) }
+      assert_raise("account_id is marked as readonly") { users(:jack).update_attribute(:account_id, nil) }
+      assert_raise("account_id is marked as readonly") { users(:jack).update_columns(account_id: nil) }
+      assert_raise("account_id is marked as readonly") { users(:jack).update_column(:account_id, nil) }
+    end
   end
 
   test "tenant account cannot be nil" do
-    assert_raise(MultiTenantSupport::NilTenantError) { users(:jack).account = nil }
-    assert_raise(MultiTenantSupport::NilTenantError) { users(:jack).account_id = nil }
-    assert_raise(MultiTenantSupport::NilTenantError) { users(:jack).update(account: nil) }
-    assert_raise(MultiTenantSupport::NilTenantError) { users(:jack).update(account_id: nil) }
-    assert_raise(MultiTenantSupport::NilTenantError) { users(:jack).update_attribute(:account, nil) }
-
     MultiTenantSupport.under_tenant(accounts(:beer_stark)) do
+      assert_raise(MultiTenantSupport::NilTenantError) { users(:jack).account = nil }
+      assert_raise(MultiTenantSupport::NilTenantError) { users(:jack).account_id = nil }
+      assert_raise(MultiTenantSupport::NilTenantError) { users(:jack).update(account: nil) }
+      assert_raise(MultiTenantSupport::NilTenantError) { users(:jack).update(account_id: nil) }
+      assert_raise(MultiTenantSupport::NilTenantError) { users(:jack).update_attribute(:account, nil) }
+
       user = User.new
       assert_raise(MultiTenantSupport::NilTenantError) { user.account = nil }
       assert_raise(MultiTenantSupport::NilTenantError) { user.account_id = nil }
@@ -82,6 +112,13 @@ class MultiTenantSupport::ModelConcernTest < ActiveSupport::TestCase
   test "tenant account binding object cannot be initialize when current tenant is nil" do
     MultiTenantSupport::Current.tenant_account = nil
     assert_raise(MultiTenantSupport::MissingTenantError) { User.new }
+  end
+
+  test "tenant's member model can only initialize when its tenant account match current tenant" do
+    MultiTenantSupport.under_tenant accounts(:beer_stark) do
+      assert_raise(MultiTenantSupport::InvalidTenantAccess) { users(:william) }
+      assert_raise(MultiTenantSupport::InvalidTenantAccess) { User.unscoped.all.to_a }
+    end
   end
 
 end
