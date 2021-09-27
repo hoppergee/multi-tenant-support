@@ -37,4 +37,12 @@ module MultiTenantSupport
     Current.default_tenant_scope_on
   end
 
+  def default_tenant_scope_on!
+    Current.default_tenant_scope_on = true
+  end
+
+  def default_tenant_scope_off!
+    Current.default_tenant_scope_on = false
+  end
+
 end

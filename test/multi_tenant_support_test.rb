@@ -54,4 +54,13 @@ class MultiTenantSupportTest < ActiveSupport::TestCase
     refute MultiTenantSupport.default_tenant_scope_on?
   end
 
+  test ".default_tenant_scope_on! and .default_tenant_scope_off!" do
+    MultiTenantSupport::Current.default_tenant_scope_on = nil
+    MultiTenantSupport.default_tenant_scope_on!
+    assert MultiTenantSupport.default_tenant_scope_on?
+
+    MultiTenantSupport.default_tenant_scope_off!
+    refute MultiTenantSupport.default_tenant_scope_on?
+  end
+
 end
