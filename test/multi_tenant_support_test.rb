@@ -43,15 +43,15 @@ class MultiTenantSupportTest < ActiveSupport::TestCase
     assert_equal fisher_mante, MultiTenantSupport.current_tenant
   end
 
-  test '.default_tenant_scope_on?' do
-    MultiTenantSupport::Current.default_tenant_scope_on = nil
-    refute MultiTenantSupport.default_tenant_scope_on?
+  test '.default_scope_on?' do
+    MultiTenantSupport::Current.default_scope_on = nil
+    refute MultiTenantSupport.default_scope_on?
 
-    MultiTenantSupport::Current.default_tenant_scope_on = true
-    assert MultiTenantSupport.default_tenant_scope_on?
+    MultiTenantSupport::Current.default_scope_on = true
+    assert MultiTenantSupport.default_scope_on?
 
-    MultiTenantSupport::Current.default_tenant_scope_on = false
-    refute MultiTenantSupport.default_tenant_scope_on?
+    MultiTenantSupport::Current.default_scope_on = false
+    refute MultiTenantSupport.default_scope_on?
   end
 
   test ".default_tenant_scope_on! and .default_tenant_scope_off!" do

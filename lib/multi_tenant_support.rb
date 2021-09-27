@@ -33,8 +33,8 @@ module MultiTenantSupport
     end
   end
 
-  def default_tenant_scope_on?
-    Current.default_tenant_scope_on
+  def default_scope_on?
+    Current.default_scope_on
   end
 
   def default_tenant_scope_on!
