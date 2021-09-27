@@ -23,12 +23,12 @@ class MultiTenantSupport::ModelConcernTest < ActiveSupport::TestCase
 
   test '.belongs_to_tenant - raise error when tenant is missing and default scope on' do
     MultiTenantSupport.turn_default_scope_on do
-      assert_raise("Current tenant is missing") { User.count }
-      assert_raise("Current tenant is missing") { User.first }
-      assert_raise("Current tenant is missing") { User.last }
-      assert_raise("Current tenant is missing") { User.new }
-      assert_raise("Current tenant is missing") { User.create(email: 'test@test.com') }
-      assert_raise("Current tenant is missing") { User.where(name: 'jack') }
+      assert_raise(MultiTenantSupport::MissingTenantError) { User.count }
+      assert_raise(MultiTenantSupport::MissingTenantError) { User.first }
+      assert_raise(MultiTenantSupport::MissingTenantError) { User.last }
+      assert_raise(MultiTenantSupport::MissingTenantError) { User.new }
+      assert_raise(MultiTenantSupport::MissingTenantError) { User.create(email: 'test@test.com') }
+      assert_raise(MultiTenantSupport::MissingTenantError) { User.where(name: 'jack') }
     end
   end
 

@@ -1,4 +1,5 @@
 require "multi_tenant_support/version"
+require "multi_tenant_support/errors"
 require "multi_tenant_support/configuration"
 require "multi_tenant_support/current"
 require "multi_tenant_support/find_tenant_account"

@@ -16,7 +16,7 @@ module MultiTenantSupport
       def set_default_scope_under_current_tenant(foreign_key)
         default_scope lambda {
           if MultiTenantSupport.default_scope_on?
-            raise "Current tenant is missing" unless MultiTenantSupport.current_tenant
+            raise MissingTenantError unless MultiTenantSupport.current_tenant
 
             tenant_account_primary_key = MultiTenantSupport.configuration.primary_key
             tenant_account_id = MultiTenantSupport.current_tenant.send(tenant_account_primary_key)
