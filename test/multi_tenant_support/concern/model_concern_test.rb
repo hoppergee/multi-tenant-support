@@ -38,4 +38,16 @@ class MultiTenantSupport::ModelConcernTest < ActiveSupport::TestCase
     end
   end
 
+  test "auto set tenant account on new and creation" do
+    MultiTenantSupport.turn_default_scope_on do
+      beer_stark = accounts(:beer_stark)
+      MultiTenantSupport.under_tenant beer_stark do
+        kate = User.new(name: 'kate')
+        assert_equal beer_stark, kate.account
+        assert kate.save
+        assert_equal beer_stark, kate.account
+      end
+    end
+  end
+
 end
