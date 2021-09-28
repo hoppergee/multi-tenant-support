@@ -1,3 +1,5 @@
+require 'active_support'
+
 module MultiTenantSupport
   class Current < ActiveSupport::CurrentAttributes
     attribute :tenant_account,
