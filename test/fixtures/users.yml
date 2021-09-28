@@ -4,7 +4,7 @@ bezos:
   account: amazon
 
 zuck:
-  name: Mike Zuckerberg
+  name: Mark Zuckerberg
   email: zuck@example.com
   account: facebook
 
