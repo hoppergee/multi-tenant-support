@@ -1,14 +1,14 @@
-beer_stark:
-  name: BeerStark
-  domain: beer-stark.com
-  subdomain: beerstark
+amazon:
+  name: Amazon
+  domain: amazon.com
+  subdomain: amazon
 
-fisher_mante:
-  name: FisherMante
-  domain: fisher-mante.com
-  subdomain: fishermante
+facebook:
+  name: Facebook
+  domain: facebook.com
+  subdomain: facebook
 
-kohler:
-  name: Kohler
-  domain: kohler.com
-  subdomain: kohler
+apple:
+  name: Apple
+  domain: apple.com
+  subdomain: apple

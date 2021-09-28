@@ -1,14 +1,14 @@
-jack:
-  name: jack
-  email: jack@test.com
-  account: beer_stark
+bezos:
+  name: Jeff Bezos
+  email: bezos@example.com
+  account: amazon
 
-william:
-  name: william
-  email: william@test.com
-  account: fisher_mante
+zuck:
+  name: Mike Zuckerberg
+  email: zuck@example.com
+  account: facebook
 
-robin:
-  name: robin
-  email: robin@test.com
-  account: kohler
+steve:
+  name: Steve Jobs
+  email: steve@example.com
+  account: apple

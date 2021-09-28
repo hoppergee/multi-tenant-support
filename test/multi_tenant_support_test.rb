@@ -26,21 +26,21 @@ class MultiTenantSupportTest < ActiveSupport::TestCase
     MultiTenantSupport::Current.tenant_account = nil
     assert MultiTenantSupport.current_tenant.nil?
 
-    fisher_mante = accounts(:fisher_mante)
-    MultiTenantSupport::Current.tenant_account = fisher_mante
-    assert_equal fisher_mante, MultiTenantSupport.current_tenant
+    facebook = accounts(:facebook)
+    MultiTenantSupport::Current.tenant_account = facebook
+    assert_equal facebook, MultiTenantSupport.current_tenant
   end
 
   test ".under_tenant" do
-    fisher_mante = accounts(:fisher_mante)
-    MultiTenantSupport::Current.tenant_account = fisher_mante
+    facebook = accounts(:facebook)
+    MultiTenantSupport::Current.tenant_account = facebook
    
-    beer_stark = accounts(:beer_stark)
-    MultiTenantSupport.under_tenant beer_stark do
-      assert_equal beer_stark, MultiTenantSupport.current_tenant
+    amazon = accounts(:amazon)
+    MultiTenantSupport.under_tenant amazon do
+      assert_equal amazon, MultiTenantSupport.current_tenant
     end
 
-    assert_equal fisher_mante, MultiTenantSupport.current_tenant
+    assert_equal facebook, MultiTenantSupport.current_tenant
   end
 
   test '.default_scope_on?' do

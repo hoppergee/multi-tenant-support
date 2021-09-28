@@ -3,33 +3,33 @@ require 'test_helper'
 class MultiTenantSupport::ModelConcern::DestroyProtectTest < ActiveSupport::TestCase
 
   setup do
-    MultiTenantSupport.under_tenant accounts(:beer_stark) do
-      @jack = users(:jack)
+    MultiTenantSupport.under_tenant accounts(:amazon) do
+      @bezos = users(:bezos)
     end
   end
 
   test 'protect #destroy' do
-    MultiTenantSupport.under_tenant accounts(:fisher_mante) do
-      assert_raise(MultiTenantSupport::InvalidTenantAccess) { @jack.destroy }
+    MultiTenantSupport.under_tenant accounts(:facebook) do
+      assert_raise(MultiTenantSupport::InvalidTenantAccess) { @bezos.destroy }
     end
 
-    MultiTenantSupport.under_tenant accounts(:beer_stark) do
-      assert @jack.reload.persisted?
+    MultiTenantSupport.under_tenant accounts(:amazon) do
+      assert @bezos.reload.persisted?
     end
   end
 
   test 'protect #destroy!' do
-    MultiTenantSupport.under_tenant accounts(:fisher_mante) do
-      assert_raise(MultiTenantSupport::InvalidTenantAccess) { @jack.destroy! }
+    MultiTenantSupport.under_tenant accounts(:facebook) do
+      assert_raise(MultiTenantSupport::InvalidTenantAccess) { @bezos.destroy! }
     end
 
-    MultiTenantSupport.under_tenant accounts(:beer_stark) do
-      assert @jack.reload.persisted?
+    MultiTenantSupport.under_tenant accounts(:amazon) do
+      assert @bezos.reload.persisted?
     end
   end
 
   test "protect .destroy_all" do
-    MultiTenantSupport.under_tenant accounts(:fisher_mante) do
+    MultiTenantSupport.under_tenant accounts(:facebook) do
       assert_changes "User.unscope_tenant.count", from: 3, to: 2 do
         User.destroy_all
       end
@@ -37,9 +37,9 @@ class MultiTenantSupport::ModelConcern::DestroyProtectTest < ActiveSupport::Test
   end
 
   test "protect .destroy_by" do
-    MultiTenantSupport.under_tenant accounts(:fisher_mante) do
+    MultiTenantSupport.under_tenant accounts(:facebook) do
       assert_no_difference "User.unscope_tenant.count" do
-        User.destroy_by(name: 'jack')
+        User.destroy_by(name: 'bezos')
       end
 
       assert_equal 3, User.unscope_tenant.count
@@ -47,7 +47,7 @@ class MultiTenantSupport::ModelConcern::DestroyProtectTest < ActiveSupport::Test
   end
 
   test "protect .delete_all" do
-    MultiTenantSupport.under_tenant accounts(:fisher_mante) do
+    MultiTenantSupport.under_tenant accounts(:facebook) do
       assert_changes "User.unscope_tenant.count", from: 3, to: 2 do
         User.delete_all
       end
@@ -55,9 +55,9 @@ class MultiTenantSupport::ModelConcern::DestroyProtectTest < ActiveSupport::Test
   end
 
   test "protect .delete_by" do
-    MultiTenantSupport.under_tenant accounts(:fisher_mante) do
+    MultiTenantSupport.under_tenant accounts(:facebook) do
       assert_no_difference "User.unscope_tenant.count" do
-        User.delete_by(name: 'jack')
+        User.delete_by(name: 'bezos')
       end
 
       assert_equal 3, User.unscope_tenant.count
