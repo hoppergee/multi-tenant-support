@@ -43,46 +43,46 @@ class MultiTenantSupportTest < ActiveSupport::TestCase
     assert_equal facebook, MultiTenantSupport.current_tenant
   end
 
-  test '.default_scope_on?' do
-    MultiTenantSupport::Current.default_scope_off = nil
-    assert MultiTenantSupport.default_scope_on?
+  test '.disallow_read_across_tenant?' do
+    MultiTenantSupport::Current.allow_read_across_tenant = nil
+    assert MultiTenantSupport.disallow_read_across_tenant?
 
-    MultiTenantSupport::Current.default_scope_off = true
-    refute MultiTenantSupport.default_scope_on?
+    MultiTenantSupport::Current.allow_read_across_tenant = true
+    refute MultiTenantSupport.disallow_read_across_tenant?
 
-    MultiTenantSupport::Current.default_scope_off = false
-    assert MultiTenantSupport.default_scope_on?
+    MultiTenantSupport::Current.allow_read_across_tenant = false
+    assert MultiTenantSupport.disallow_read_across_tenant?
   end
 
-  test ".turn_default_scope_on and .turn_default_scope_off" do
-    MultiTenantSupport::Current.default_scope_off = nil
-    MultiTenantSupport.turn_default_scope_on
-    assert MultiTenantSupport.default_scope_on?
+  test ".disallow_read_across_tenant and .allow_read_across_tenant" do
+    MultiTenantSupport::Current.allow_read_across_tenant = nil
+    MultiTenantSupport.disallow_read_across_tenant
+    assert MultiTenantSupport.disallow_read_across_tenant?
 
-    MultiTenantSupport.turn_default_scope_off
-    refute MultiTenantSupport.default_scope_on?
+    MultiTenantSupport.allow_read_across_tenant
+    refute MultiTenantSupport.disallow_read_across_tenant?
   end
 
-  test ".turn_default_scope_on - accept block" do
-    MultiTenantSupport::Current.default_scope_off = true
-    refute MultiTenantSupport.default_scope_on?
+  test ".disallow_read_across_tenant - accept block" do
+    MultiTenantSupport::Current.allow_read_across_tenant = true
+    refute MultiTenantSupport.disallow_read_across_tenant?
 
-    MultiTenantSupport.turn_default_scope_on do
-      assert MultiTenantSupport.default_scope_on?
+    MultiTenantSupport.disallow_read_across_tenant do
+      assert MultiTenantSupport.disallow_read_across_tenant?
     end
 
-    refute MultiTenantSupport.default_scope_on?
+    refute MultiTenantSupport.disallow_read_across_tenant?
   end
 
-  test ".turn_default_scope_off - accept block" do
-    MultiTenantSupport::Current.default_scope_off = false
-    assert MultiTenantSupport.default_scope_on?
+  test ".allow_read_across_tenant - accept block" do
+    MultiTenantSupport::Current.allow_read_across_tenant = false
+    assert MultiTenantSupport.disallow_read_across_tenant?
 
-    MultiTenantSupport.turn_default_scope_off do
-      refute MultiTenantSupport.default_scope_on?
+    MultiTenantSupport.allow_read_across_tenant do
+      refute MultiTenantSupport.disallow_read_across_tenant?
     end
 
-    assert MultiTenantSupport.default_scope_on?
+    assert MultiTenantSupport.disallow_read_across_tenant?
   end
 
 end

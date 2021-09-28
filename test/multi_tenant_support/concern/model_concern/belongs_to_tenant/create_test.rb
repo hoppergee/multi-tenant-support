@@ -26,7 +26,7 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_CreateTest < ActiveSuppo
   end
 
   test "create - raise error on missing tenant when allow read across tenant" do
-    MultiTenantSupport.turn_default_scope_off do
+    MultiTenantSupport.allow_read_across_tenant do
       assert_raise(MultiTenantSupport::MissingTenantError) { User.create(email: 'test@test.com') }
       assert_raise(MultiTenantSupport::MissingTenantError) { User.create!(email: 'test@test.com') }
       assert_raise(MultiTenantSupport::MissingTenantError) do

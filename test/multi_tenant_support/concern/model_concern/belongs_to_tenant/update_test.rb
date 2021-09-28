@@ -100,7 +100,7 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_UpdateTest < ActiveSuppo
   test "raise error on update through .save when missing current tenant and allow read across tenant" do
     @bezos.name = "JUFF BEZOS"
 
-    MultiTenantSupport.turn_default_scope_off do
+    MultiTenantSupport.allow_read_across_tenant do
       assert_raise(MultiTenantSupport::InvalidTenantAccess) { @bezos.save }
 
       @bezos.reload
@@ -111,7 +111,7 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_UpdateTest < ActiveSuppo
   test "raise error on update through .save! when missing current tenant and allow read across tenant" do
     @bezos.name = "JUFF BEZOS"
 
-    MultiTenantSupport.turn_default_scope_off do
+    MultiTenantSupport.allow_read_across_tenant do
       assert_raise(MultiTenantSupport::InvalidTenantAccess) { @bezos.save! }
 
       @bezos.reload
@@ -122,7 +122,7 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_UpdateTest < ActiveSuppo
   test "raise error on update through .save(validate: false) when missing current tenant and allow read across tenant" do
     @bezos.name = "JUFF BEZOS"
 
-    MultiTenantSupport.turn_default_scope_off do
+    MultiTenantSupport.allow_read_across_tenant do
       assert_raise(MultiTenantSupport::InvalidTenantAccess) { @bezos.save(validate: false) }
 
       @bezos.reload
@@ -131,7 +131,7 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_UpdateTest < ActiveSuppo
   end
 
   test "raise error on update through update when missing current tenant and allow read across tenant" do
-    MultiTenantSupport.turn_default_scope_off do
+    MultiTenantSupport.allow_read_across_tenant do
       assert_raise(MultiTenantSupport::InvalidTenantAccess) { @bezos.update(name: 'JUFF BEZOS') }
 
       @bezos.reload
@@ -140,7 +140,7 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_UpdateTest < ActiveSuppo
   end
 
   test "raise error on update through update_attribute when missing current tenant and allow read across tenant" do
-    MultiTenantSupport.turn_default_scope_off do
+    MultiTenantSupport.allow_read_across_tenant do
       assert_raise(MultiTenantSupport::InvalidTenantAccess) { @bezos.update_attribute(:name, 'JUFF BEZOS') }
 
       @bezos.reload
@@ -149,7 +149,7 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_UpdateTest < ActiveSuppo
   end
 
   test "raise error on update through update_columns when missing current tenant and allow read across tenant" do
-    MultiTenantSupport.turn_default_scope_off do
+    MultiTenantSupport.allow_read_across_tenant do
       assert_raise(MultiTenantSupport::InvalidTenantAccess) { @bezos.update_columns(name: 'JUFF BEZOS') }
 
       @bezos.reload
@@ -158,7 +158,7 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_UpdateTest < ActiveSuppo
   end
 
   test "raise error on update through update_column when missing current tenant and allow read across tenant" do
-    MultiTenantSupport.turn_default_scope_off do
+    MultiTenantSupport.allow_read_across_tenant do
       assert_raise(MultiTenantSupport::InvalidTenantAccess) { @bezos.update_column(:name, 'JUFF BEZOS') }
 
       @bezos.reload

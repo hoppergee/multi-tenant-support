@@ -38,27 +38,27 @@ module MultiTenantSupport
     end
   end
 
-  def default_scope_on?
-    !Current.default_scope_off
+  def disallow_read_across_tenant?
+    !Current.allow_read_across_tenant
   end
 
-  def turn_default_scope_on
+  def disallow_read_across_tenant
     if block_given?
-      Current.set(default_scope_off: false) do
+      Current.set(allow_read_across_tenant: false) do
         yield
       end
     else
-      Current.default_scope_off = false
+      Current.allow_read_across_tenant = false
     end
   end
 
-  def turn_default_scope_off
+  def allow_read_across_tenant
     if block_given?
-      Current.set(default_scope_off: true) do
+      Current.set(allow_read_across_tenant: true) do
         yield
       end
     else
-      Current.default_scope_off = true
+      Current.allow_read_across_tenant = true
     end
   end
 

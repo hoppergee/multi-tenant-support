@@ -16,7 +16,7 @@ module MultiTenantSupport
 
       def set_default_scope_under_current_tenant(foreign_key)
         default_scope lambda {
-          if MultiTenantSupport.default_scope_on?
+          if MultiTenantSupport.disallow_read_across_tenant?
             raise MissingTenantError unless MultiTenantSupport.current_tenant
 
             tenant_account_primary_key = MultiTenantSupport.configuration.primary_key
@@ -30,7 +30,7 @@ module MultiTenantSupport
         scope :unscope_tenant, -> { unscope(where: foreign_key) }
 
         after_initialize do |object|
-          if MultiTenantSupport.default_scope_on? || object.new_record?
+          if MultiTenantSupport.disallow_read_across_tenant? || object.new_record?
             raise MissingTenantError unless MultiTenantSupport.current_tenant
             raise InvalidTenantAccess if object.send(foreign_key) != MultiTenantSupport.current_tenant_id
           end

@@ -9,7 +9,7 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_UnscopedTest < ActiveSup
   end
 
   test ".unscoped - won't raise error when allow read across tenant" do
-    MultiTenantSupport.turn_default_scope_off do
+    MultiTenantSupport.allow_read_across_tenant do
       MultiTenantSupport.under_tenant accounts(:amazon) do
         assert_equal 3, User.unscoped.all.to_a.count
       end

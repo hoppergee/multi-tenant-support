@@ -3,7 +3,7 @@ require 'test_helper'
 class MultiTenantSupport::ModelConcern::BelongsToTenant_DefaultScopeSetupTest < ActiveSupport::TestCase
 
   setup do
-    MultiTenantSupport.turn_default_scope_on
+    MultiTenantSupport.disallow_read_across_tenant
   end
 
   test 'set default scope to under current tenant' do

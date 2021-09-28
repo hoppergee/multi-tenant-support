@@ -16,7 +16,7 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_NewTest < ActiveSupport:
   end
 
   test ".new - raise error on missing tenant when allow read across tenant" do
-    MultiTenantSupport.turn_default_scope_off do
+    MultiTenantSupport.allow_read_across_tenant do
       assert_raise(MultiTenantSupport::MissingTenantError) do
         User.new
       end

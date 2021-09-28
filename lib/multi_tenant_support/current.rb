@@ -1,6 +1,6 @@
 module MultiTenantSupport
   class Current < ActiveSupport::CurrentAttributes
     attribute :tenant_account,
-              :default_scope_off
+              :allow_read_across_tenant
   end
 end
