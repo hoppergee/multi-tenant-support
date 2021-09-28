@@ -1,6 +1,6 @@
 require 'test_helper'
 
-class MultiTenantSupport::ModelConcern::DestroyProtectTest < ActiveSupport::TestCase
+class MultiTenantSupport::ModelConcern::BelongsToTenant_DestroyProtectTest < ActiveSupport::TestCase
 
   setup do
     MultiTenantSupport.under_tenant accounts(:amazon) do
