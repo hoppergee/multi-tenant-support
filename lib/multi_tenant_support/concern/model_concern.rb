@@ -53,6 +53,10 @@ module MultiTenantSupport
         }
 
         include override_update_columns_module
+
+        before_destroy do |object|
+          raise InvalidTenantAccess if object.send(foreign_key) != MultiTenantSupport.current_tenant_id
+        end
       end
 
       def set_tenant_account_readonly(tenant_name, foreign_key)
