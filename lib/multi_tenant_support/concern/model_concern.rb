@@ -17,17 +17,32 @@ module MultiTenantSupport
       def set_default_scope_under_current_tenant(foreign_key)
         default_scope lambda {
           if MultiTenantSupport.disallow_read_across_tenant? || MultiTenantSupport.current_tenant
-            raise MissingTenantError unless MultiTenantSupport.current_tenant
-
-            tenant_account_primary_key = MultiTenantSupport.configuration.primary_key
-            tenant_account_id = MultiTenantSupport.current_tenant.send(tenant_account_primary_key)
-            where(foreign_key => tenant_account_id)
+            scope_under_current_tenant
           else
             where(nil)
           end
         }
 
+        scope :scope_under_current_tenant, lambda {
+          raise MissingTenantError unless MultiTenantSupport.current_tenant
+
+          tenant_account_primary_key = MultiTenantSupport.configuration.primary_key
+          tenant_account_id = MultiTenantSupport.current_tenant.send(tenant_account_primary_key)
+          where(foreign_key => tenant_account_id)
+        }
+
         scope :unscope_tenant, -> { unscope(where: foreign_key) }
+
+        override_unscoped = Module.new {
+          define_method :unscoped do |&block|
+            if MultiTenantSupport.disallow_read_across_tenant? || MultiTenantSupport.current_tenant
+              block ? relation.scope_under_current_tenant.scoping { block.call } : relation.scope_under_current_tenant
+            else
+              super(&block)
+            end
+          end
+        }
+        extend override_unscoped
 
         after_initialize do |object|
           if MultiTenantSupport.disallow_read_across_tenant? || object.new_record?

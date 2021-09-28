@@ -8,17 +8,17 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_LoadTest < ActiveSupport
     end
 
     MultiTenantSupport.under_tenant accounts(:facebook) do
-      assert_raise(MultiTenantSupport::InvalidTenantAccess) {  users(:bezos).reload }
+      assert_raise(ActiveRecord::RecordNotFound) {  users(:bezos).reload }
     end
 
     MultiTenantSupport.under_tenant accounts(:apple) do
-      assert_raise(MultiTenantSupport::InvalidTenantAccess) {  users(:bezos).reload }
+      assert_raise(ActiveRecord::RecordNotFound) {  users(:bezos).reload }
     end
   end
 
   test 'zuck can only initialize under facebook' do
     MultiTenantSupport.under_tenant accounts(:amazon) do
-      assert_raise(MultiTenantSupport::InvalidTenantAccess) {  users(:zuck).reload }
+      assert_raise(ActiveRecord::RecordNotFound) {  users(:zuck) }
     end
 
     MultiTenantSupport.under_tenant accounts(:facebook) do
@@ -26,17 +26,17 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_LoadTest < ActiveSupport
     end
 
     MultiTenantSupport.under_tenant accounts(:apple) do
-      assert_raise(MultiTenantSupport::InvalidTenantAccess) {  users(:zuck).reload }
+      assert_raise(ActiveRecord::RecordNotFound) {  users(:zuck).reload }
     end
   end
 
   test 'steve can only initialize under apple' do
     MultiTenantSupport.under_tenant accounts(:amazon) do
-      assert_raise(MultiTenantSupport::InvalidTenantAccess) {  users(:steve).reload }
+      assert_raise(ActiveRecord::RecordNotFound) {  users(:steve).reload }
     end
 
     MultiTenantSupport.under_tenant accounts(:facebook) do
-      assert_raise(MultiTenantSupport::InvalidTenantAccess) {  users(:steve).reload }
+      assert_raise(ActiveRecord::RecordNotFound) {  users(:steve).reload }
     end
 
     MultiTenantSupport.under_tenant accounts(:apple) do
