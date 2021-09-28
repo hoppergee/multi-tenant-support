@@ -37,17 +37,20 @@ module MultiTenantSupport
         end
 
         before_save do |object|
+          raise NilTenantError if object.send(foreign_key).nil?
           raise InvalidTenantAccess if object.send(foreign_key) != MultiTenantSupport.current_tenant_id
         end
 
         override_update_columns_module = Module.new {
           define_method :update_columns do |attributes|
+            raise NilTenantError if send(foreign_key).nil?
             raise InvalidTenantAccess if send(foreign_key) != MultiTenantSupport.current_tenant_id
 
             super(attributes)
           end
 
           define_method :update_column do |name, value|
+            raise NilTenantError if send(foreign_key).nil?
             raise InvalidTenantAccess if send(foreign_key) != MultiTenantSupport.current_tenant_id
 
             super(name, value)
@@ -66,6 +69,7 @@ module MultiTenantSupport
 
           define_method "#{tenant_name}=" do |tenant|
             raise NilTenantError if tenant.nil?
+            raise MissingTenantError unless MultiTenantSupport.current_tenant
 
             if new_record? && tenant == MultiTenantSupport.current_tenant
               super tenant
@@ -76,6 +80,7 @@ module MultiTenantSupport
 
           define_method "#{foreign_key}=" do |key|
             raise NilTenantError if key.nil?
+            raise MissingTenantError unless MultiTenantSupport.current_tenant
 
             if new_record? && key == MultiTenantSupport.current_tenant_id
               super key
