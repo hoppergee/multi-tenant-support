@@ -20,4 +20,20 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_CounterTest < ActiveSupp
     end
   end
 
+  test ".count - won't count steve and zuck under amazon when wrap in allow_read_across_tenant " do
+    MultiTenantSupport.allow_read_across_tenant do
+      MultiTenantSupport.under_tenant accounts(:amazon) do
+        assert_equal 1, User.count
+      end
+    end
+  end
+
+  test ".count - won't count steve and zuck under amazon when call allow_read_across_tenant withint it" do
+    MultiTenantSupport.under_tenant accounts(:amazon) do
+      MultiTenantSupport.allow_read_across_tenant do
+        assert_equal 1, User.count
+      end
+    end
+  end
+
 end
