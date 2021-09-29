@@ -44,6 +44,21 @@ module MultiTenantSupport
         }
         extend override_unscoped
 
+        override_insert_all = Module.new {
+          define_method :insert_all do |attributes, **arguments|
+            raise MissingTenantError unless MultiTenantSupport.current_tenant
+
+            super(attributes, **arguments)
+          end
+
+          define_method :insert_all! do |attributes, **arguments|
+            raise MissingTenantError unless MultiTenantSupport.current_tenant
+
+            super(attributes, **arguments)
+          end
+        }
+        extend override_insert_all
+
         after_initialize do |object|
           if MultiTenantSupport.disallow_read_across_tenant? || object.new_record?
             raise MissingTenantError unless MultiTenantSupport.current_tenant
