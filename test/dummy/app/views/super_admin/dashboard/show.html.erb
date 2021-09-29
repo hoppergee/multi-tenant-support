@@ -1,0 +1,10 @@
+<h1>SuperAdmin Dashboard</h1>
+<% if current_tenant_account %>
+  <div>Current tenant exist</div>
+<% else %>
+  <div>Current tenant does not exist</div>
+<% end %>
+<div id="UsersCount"><%= User.count %></div>
+<div id="Bezos"><%= User.find_by(email: 'bezos@example.com').name %></div>
+<div id="Zuck"><%= User.find_by(email: 'zuck@example.com').name %></div>
+<div id="Steve"><%= User.find_by(email: 'steve@example.com').name %></div>

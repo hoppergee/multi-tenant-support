@@ -28,4 +28,14 @@ class CurrentTenantTest < ActionDispatch::IntegrationTest
     assert_select "#subdomain", text: "amazon"
   end
 
+  test "can't find tenant when visit the host domain" do
+    host! "example.com"
+    get users_path
+
+    assert_redirected_to super_admin_dashboard_path
+    follow_redirect!
+    assert_response :success
+    assert_select "h1", text: "SuperAdmin Dashboard"
+  end
+
 end
