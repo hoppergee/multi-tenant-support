@@ -53,6 +53,18 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_UpdateTest < ActiveSuppo
     end
   end
 
+  test "raise error on update through .write_attribute + .save when user.account not matching current tenant" do
+    @bezos.write_attribute(:name, "JUFF BEZOS")
+    MultiTenantSupport.under_tenant accounts(:facebook) do
+      assert_raise(MultiTenantSupport::InvalidTenantAccess) { @bezos.save }
+    end
+
+    MultiTenantSupport.under_tenant accounts(:amazon) do
+      @bezos.reload
+      assert_equal "Jeff Bezos", @bezos.name
+    end
+  end
+
   test "raise error on update through update when user.account not matching current tenant" do
     MultiTenantSupport.under_tenant accounts(:facebook) do
       assert_raise(MultiTenantSupport::InvalidTenantAccess) { @bezos.update(name: 'JUFF BEZOS') }
