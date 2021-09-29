@@ -210,7 +210,7 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_UpdateTest < ActiveSuppo
       assert_equal 3, User.count
     end
 
-    out, err = capture_io do
+    _, err = capture_io do
       assert_raise MultiTenantSupport::MissingTenantError do
         User.upsert_all([
           {name: 'JUFF BEZOS', email: 'bezos@example.com', created_at: Time.current, updated_at: Time.current},
@@ -230,7 +230,7 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_UpdateTest < ActiveSuppo
   test ".upsert_all - will warn user on call this method when allow read across tenant and tenant is missing" do
     MultiTenantSupport.allow_read_across_tenant do
       assert_difference 'User.count', 1 do
-        out, err = capture_io do
+        _, err = capture_io do
           User.upsert_all([
             {name: 'JUFF BEZOS', email: 'bezos@example.com', created_at: Time.current, updated_at: Time.current},
             {name: 'MARK ZUCKERBERG', email: 'zuck@example.com', created_at: Time.current, updated_at: Time.current},
@@ -249,7 +249,7 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_UpdateTest < ActiveSuppo
   test ".upsert_all - will warn user on call this method when disallow read across tenant and tenant exist" do
     MultiTenantSupport.under_tenant(accounts(:apple)) do
       assert_difference 'User.count', 1 do
-        out, err = capture_io do
+        _, err = capture_io do
           User.upsert_all([
             {name: 'JUFF BEZOS', email: 'bezos@example.com', created_at: Time.current, updated_at: Time.current},
             {name: 'MARK ZUCKERBERG', email: 'zuck@example.com', created_at: Time.current, updated_at: Time.current},
@@ -268,7 +268,7 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_UpdateTest < ActiveSuppo
     MultiTenantSupport.allow_read_across_tenant do
       MultiTenantSupport.under_tenant(accounts(:apple)) do
         assert_difference 'User.count', 1 do
-          out, err = capture_io do
+          _, err = capture_io do
             User.upsert_all([
               {name: 'JUFF BEZOS', email: 'bezos@example.com', created_at: Time.current, updated_at: Time.current},
               {name: 'MARK ZUCKERBERG', email: 'zuck@example.com', created_at: Time.current, updated_at: Time.current},
@@ -292,7 +292,7 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_UpdateTest < ActiveSuppo
       assert_equal 3, User.count
     end
 
-    out, err = capture_io do
+    _, err = capture_io do
       assert_raise MultiTenantSupport::MissingTenantError do
         User.upsert({name: 'JUFF BEZOS', email: 'bezos@example.com', created_at: Time.current, updated_at: Time.current}, unique_by: :email)
         User.upsert({name: 'MARK ZUCKERBERG', email: 'zuck@example.com', created_at: Time.current, updated_at: Time.current}, unique_by: :email)
@@ -310,7 +310,7 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_UpdateTest < ActiveSuppo
   test ".upsert - will warn user on call this method when allow read across tenant and tenant is missing" do
     MultiTenantSupport.allow_read_across_tenant do
       assert_difference 'User.count', 1 do
-        out, err = capture_io do
+        _, err = capture_io do
           User.upsert({name: 'JUFF BEZOS', email: 'bezos@example.com', created_at: Time.current, updated_at: Time.current}, unique_by: :email)
           User.upsert({name: 'MARK ZUCKERBERG', email: 'zuck@example.com', created_at: Time.current, updated_at: Time.current}, unique_by: :email)
           User.upsert({name: 'New User', email: 'new.user@example.com', created_at: Time.current, updated_at: Time.current}, unique_by: :email)
@@ -327,7 +327,7 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_UpdateTest < ActiveSuppo
   test ".upsert - will warn user on call this method when disallow read across tenant and tenant exist" do
     MultiTenantSupport.under_tenant(accounts(:apple)) do
       assert_difference 'User.count', 1 do
-        out, err = capture_io do
+        _, err = capture_io do
           User.upsert({name: 'JUFF BEZOS', email: 'bezos@example.com', created_at: Time.current, updated_at: Time.current}, unique_by: :email)
           User.upsert({name: 'MARK ZUCKERBERG', email: 'zuck@example.com', created_at: Time.current, updated_at: Time.current}, unique_by: :email)
           User.upsert({name: 'New User', email: 'new.user@example.com', created_at: Time.current, updated_at: Time.current}, unique_by: :email)
@@ -344,7 +344,7 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_UpdateTest < ActiveSuppo
     MultiTenantSupport.allow_read_across_tenant do
       MultiTenantSupport.under_tenant(accounts(:apple)) do
         assert_difference 'User.count', 1 do
-          out, err = capture_io do
+          _, err = capture_io do
             User.upsert({name: 'JUFF BEZOS', email: 'bezos@example.com', created_at: Time.current, updated_at: Time.current}, unique_by: :email)
             User.upsert({name: 'MARK ZUCKERBERG', email: 'zuck@example.com', created_at: Time.current, updated_at: Time.current}, unique_by: :email)
             User.upsert({name: 'New User', email: 'new.user@example.com', created_at: Time.current, updated_at: Time.current}, unique_by: :email)
