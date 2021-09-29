@@ -14,7 +14,7 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_DefaultScopeSetupTest < 
       assert_equal users(:bezos), User.last
       assert_equal users(:bezos), User.find_by(name: 'Jeff Bezos')
       assert_equal users(:bezos), User.where(name: 'Jeff Bezos').first
-      kate = User.new(name: 'kate')
+      kate = User.new(name: 'kate', email: 'kate@example.com')
       assert kate.save
       assert_equal kate, User.where(name: 'kate').first
     end

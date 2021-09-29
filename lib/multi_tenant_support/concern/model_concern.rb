@@ -59,6 +59,15 @@ module MultiTenantSupport
         }
         extend override_insert_all
 
+        override_upsert_all = Module.new {
+          define_method :upsert_all do |attributes, **arguments|
+            warn "[WARNING] You are using upsert_all(or upsert) which may update records across tenants"
+
+            super(attributes, **arguments)
+          end
+        }
+        extend override_upsert_all
+
         after_initialize do |object|
           if MultiTenantSupport.disallow_read_across_tenant? || object.new_record?
             raise MissingTenantError unless MultiTenantSupport.current_tenant

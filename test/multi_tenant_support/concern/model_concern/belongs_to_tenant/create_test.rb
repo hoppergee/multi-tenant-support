@@ -7,25 +7,25 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_CreateTest < ActiveSuppo
   ####
   test "create/insert - auto set tenant account on creation" do
     MultiTenantSupport.under_tenant accounts(:amazon) do
-      kate = User.new(name: 'kate')
+      kate = User.new(name: 'kate', email: 'kate@example.com')
       assert kate.save
       assert_equal accounts(:amazon), kate.account
 
       assert_difference 'User.count', 1 do
-        john = User.create(name: 'john')
+        john = User.create(name: 'john', email: 'john@example.com')
         assert_equal accounts(:amazon), john.account
       end
 
-      jack = User.create!(name: 'jack')
+      jack = User.create!(name: 'jack', email: 'jack@example.com')
       assert_equal accounts(:amazon), jack.account
 
       assert_difference 'User.count', 1 do
-        User.insert({name: 'tom', created_at: Time.current, updated_at: Time.current})
+        User.insert({name: 'tom', email: 'tom@example.com', created_at: Time.current, updated_at: Time.current})
         assert_equal accounts(:amazon), User.find_by(name: 'tom').account
       end
 
       assert_difference 'User.count', 1 do
-        User.insert!({name: 'robin', created_at: Time.current, updated_at: Time.current})
+        User.insert!({name: 'robin', email: 'robin@example.com', created_at: Time.current, updated_at: Time.current})
         assert_equal accounts(:amazon), User.find_by(name: 'robin').account
       end
     end
@@ -61,8 +61,8 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_CreateTest < ActiveSuppo
   test ".insert_all - can success insert with default scope" do
     MultiTenantSupport.under_tenant(accounts(:amazon)) do
       User.insert_all([
-        { id: 99, name: 'jack', created_at: Time.current, updated_at: Time.current },
-        { id: 100, name: 'kate', created_at: Time.current, updated_at: Time.current }
+        { id: 99, name: 'jack', email: 'jack@example.com', created_at: Time.current, updated_at: Time.current },
+        { id: 100, name: 'kate', email: 'kate@example.com', created_at: Time.current, updated_at: Time.current }
       ])
 
       assert accounts(:amazon), User.find(99)
@@ -73,8 +73,8 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_CreateTest < ActiveSuppo
   test ".insert_all - can't insert when tenant is missing" do
     assert_raise(MultiTenantSupport::MissingTenantError) do
       User.insert_all([
-        { id: 99, name: 'jack', created_at: Time.current, updated_at: Time.current },
-        { id: 100, name: 'kate', created_at: Time.current, updated_at: Time.current }
+        { id: 99, name: 'jack', email: 'jack@example.com', created_at: Time.current, updated_at: Time.current },
+        { id: 100, name: 'kate', email: 'kate@example.com', created_at: Time.current, updated_at: Time.current }
       ])
     end
   end
@@ -83,8 +83,8 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_CreateTest < ActiveSuppo
     MultiTenantSupport.allow_read_across_tenant do
       assert_raise(MultiTenantSupport::MissingTenantError) do
         User.insert_all([
-          { id: 99, name: 'jack', created_at: Time.current, updated_at: Time.current },
-          { id: 100, name: 'kate', created_at: Time.current, updated_at: Time.current }
+          { id: 99, name: 'jack', email: 'jack@example.com', created_at: Time.current, updated_at: Time.current },
+          { id: 100, name: 'kate', email: 'kate@example.com', created_at: Time.current, updated_at: Time.current }
         ])
       end
     end
@@ -96,8 +96,8 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_CreateTest < ActiveSuppo
   test ".insert_all! - can success insert with default scope" do
     MultiTenantSupport.under_tenant(accounts(:amazon)) do
       User.insert_all!([
-        { id: 99, name: 'jack', created_at: Time.current, updated_at: Time.current },
-        { id: 100, name: 'kate', created_at: Time.current, updated_at: Time.current }
+        { id: 99, name: 'jack', email: 'jack@example.com', created_at: Time.current, updated_at: Time.current },
+        { id: 100, name: 'kate', email: 'kate@example.com', created_at: Time.current, updated_at: Time.current }
       ])
 
       assert accounts(:amazon), User.find(99)
@@ -108,8 +108,8 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_CreateTest < ActiveSuppo
   test ".insert_all! - can't insert when tenant is missing" do
     assert_raise(MultiTenantSupport::MissingTenantError) do
       User.insert_all!([
-        { id: 99, name: 'jack', created_at: Time.current, updated_at: Time.current },
-        { id: 100, name: 'kate', created_at: Time.current, updated_at: Time.current }
+        { id: 99, name: 'jack', email: 'jack@example.com', created_at: Time.current, updated_at: Time.current },
+        { id: 100, name: 'kate', email: 'kate@example.com', created_at: Time.current, updated_at: Time.current }
       ])
     end
   end
@@ -118,8 +118,8 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_CreateTest < ActiveSuppo
     MultiTenantSupport.allow_read_across_tenant do
       assert_raise(MultiTenantSupport::MissingTenantError) do
         User.insert_all!([
-          { id: 99, name: 'jack', created_at: Time.current, updated_at: Time.current },
-          { id: 100, name: 'kate', created_at: Time.current, updated_at: Time.current }
+          { id: 99, name: 'jack', email: 'jack@example.com', created_at: Time.current, updated_at: Time.current },
+          { id: 100, name: 'kate', email: 'kate@example.com', created_at: Time.current, updated_at: Time.current }
         ])
       end
     end
