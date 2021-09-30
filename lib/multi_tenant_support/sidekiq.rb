@@ -45,7 +45,7 @@ Sidekiq.configure_server do |config|
     chain.add MultiTenantSupport::Sidekiq::Client
   end
 
-  config.server_middlreware do |chain|
+  config.server_middleware do |chain|
     if defined?(Sidekiq::Middleware::Server::RetryJobs)
       chain.insert_before Sidekiq::Middleware::Server::RetryJobs, MultiTenantSupport::Sidekiq::Server
     elsif defined?(Sidekiq::Batch::Server)
