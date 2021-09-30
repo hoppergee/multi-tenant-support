@@ -11,3 +11,4 @@ end
 # To use a debugger
 gem 'byebug', group: [:development, :test]
 gem 'minitest-focus', group: [:test]
+gem 'sidekiq', group: [:test]
