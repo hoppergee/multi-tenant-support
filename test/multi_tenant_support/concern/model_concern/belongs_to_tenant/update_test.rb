@@ -13,14 +13,14 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_UpdateTest < ActiveSuppo
   ####
   test 'update - can update user when user.account match current tenant' do
     MultiTenantSupport.under_tenant accounts(:amazon) do
-      @bezos.name = "JUFF BEZOS"
+      @bezos.name = "JEFF BEZOS"
       assert @bezos.save
-      assert_equal "JUFF BEZOS", @bezos.name
+      assert_equal "JEFF BEZOS", @bezos.name
     end
   end
 
   test "raise error on update through .save when user.account not matching current tenant" do
-    @bezos.name = "JUFF BEZOS"
+    @bezos.name = "JEFF BEZOS"
 
     MultiTenantSupport.under_tenant accounts(:facebook) do
       assert_raise(MultiTenantSupport::InvalidTenantAccess) { @bezos.save }
@@ -33,7 +33,7 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_UpdateTest < ActiveSuppo
   end
 
   test "raise error on update through .save when missing current tenant and allow read across tenant" do
-    @bezos.name = "JUFF BEZOS"
+    @bezos.name = "JEFF BEZOS"
 
     MultiTenantSupport.allow_read_across_tenant do
       assert_raise(MultiTenantSupport::InvalidTenantAccess) { @bezos.save }
@@ -47,7 +47,7 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_UpdateTest < ActiveSuppo
   # .save!
   ####
   test "raise error on update through .save! when user.account not matching current tenant" do
-    @bezos.name = "JUFF BEZOS"
+    @bezos.name = "JEFF BEZOS"
     MultiTenantSupport.under_tenant accounts(:facebook) do
       assert_raise(MultiTenantSupport::InvalidTenantAccess) { @bezos.save! }
     end
@@ -59,7 +59,7 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_UpdateTest < ActiveSuppo
   end
 
   test "raise error on update through .save! when missing current tenant and allow read across tenant" do
-    @bezos.name = "JUFF BEZOS"
+    @bezos.name = "JEFF BEZOS"
 
     MultiTenantSupport.allow_read_across_tenant do
       assert_raise(MultiTenantSupport::InvalidTenantAccess) { @bezos.save! }
@@ -73,7 +73,7 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_UpdateTest < ActiveSuppo
   # .save(validate: false)
   ####
   test "raise error on update through .save(validate: false) when user.account not matching current tenant" do
-    @bezos.name = "JUFF BEZOS"
+    @bezos.name = "JEFF BEZOS"
     MultiTenantSupport.under_tenant accounts(:facebook) do
       assert_raise(MultiTenantSupport::InvalidTenantAccess) { @bezos.save(validate: false) }
     end
@@ -85,7 +85,7 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_UpdateTest < ActiveSuppo
   end
 
   test "raise error on update through .save(validate: false) when missing current tenant and allow read across tenant" do
-    @bezos.name = "JUFF BEZOS"
+    @bezos.name = "JEFF BEZOS"
 
     MultiTenantSupport.allow_read_across_tenant do
       assert_raise(MultiTenantSupport::InvalidTenantAccess) { @bezos.save(validate: false) }
@@ -99,7 +99,7 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_UpdateTest < ActiveSuppo
   # .write_attribute + .save
   ####
   test "raise error on update through .write_attribute + .save when user.account not matching current tenant" do
-    @bezos.write_attribute(:name, "JUFF BEZOS")
+    @bezos.write_attribute(:name, "JEFF BEZOS")
     MultiTenantSupport.under_tenant accounts(:facebook) do
       assert_raise(MultiTenantSupport::InvalidTenantAccess) { @bezos.save }
     end
@@ -115,7 +115,7 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_UpdateTest < ActiveSuppo
   ####
   test "raise error on update through update when user.account not matching current tenant" do
     MultiTenantSupport.under_tenant accounts(:facebook) do
-      assert_raise(MultiTenantSupport::InvalidTenantAccess) { @bezos.update(name: 'JUFF BEZOS') }
+      assert_raise(MultiTenantSupport::InvalidTenantAccess) { @bezos.update(name: 'JEFF BEZOS') }
     end
 
     MultiTenantSupport.under_tenant accounts(:amazon) do
@@ -126,7 +126,7 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_UpdateTest < ActiveSuppo
 
   test "raise error on update through update when missing current tenant and allow read across tenant" do
     MultiTenantSupport.allow_read_across_tenant do
-      assert_raise(MultiTenantSupport::InvalidTenantAccess) { @bezos.update(name: 'JUFF BEZOS') }
+      assert_raise(MultiTenantSupport::InvalidTenantAccess) { @bezos.update(name: 'JEFF BEZOS') }
 
       @bezos.reload
       assert_equal "Jeff Bezos", @bezos.name
@@ -138,7 +138,7 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_UpdateTest < ActiveSuppo
   ####
   test "raise error on update through update_attribute when user.account not matching current tenant" do
     MultiTenantSupport.under_tenant accounts(:facebook) do
-      assert_raise(MultiTenantSupport::InvalidTenantAccess) { @bezos.update_attribute(:name, 'JUFF BEZOS') }
+      assert_raise(MultiTenantSupport::InvalidTenantAccess) { @bezos.update_attribute(:name, 'JEFF BEZOS') }
     end
 
     MultiTenantSupport.under_tenant accounts(:amazon) do
@@ -149,7 +149,7 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_UpdateTest < ActiveSuppo
 
   test "raise error on update through update_attribute when missing current tenant and allow read across tenant" do
     MultiTenantSupport.allow_read_across_tenant do
-      assert_raise(MultiTenantSupport::InvalidTenantAccess) { @bezos.update_attribute(:name, 'JUFF BEZOS') }
+      assert_raise(MultiTenantSupport::InvalidTenantAccess) { @bezos.update_attribute(:name, 'JEFF BEZOS') }
 
       @bezos.reload
       assert_equal "Jeff Bezos", @bezos.name
@@ -161,7 +161,7 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_UpdateTest < ActiveSuppo
   ####
   test "raise error on update through update_columns when user.account not matching current tenant" do
     MultiTenantSupport.under_tenant accounts(:facebook) do
-      assert_raise(MultiTenantSupport::InvalidTenantAccess) { @bezos.update_columns(name: 'JUFF BEZOS') }
+      assert_raise(MultiTenantSupport::InvalidTenantAccess) { @bezos.update_columns(name: 'JEFF BEZOS') }
     end
 
     MultiTenantSupport.under_tenant accounts(:amazon) do
@@ -172,7 +172,7 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_UpdateTest < ActiveSuppo
 
   test "raise error on update through update_columns when missing current tenant and allow read across tenant" do
     MultiTenantSupport.allow_read_across_tenant do
-      assert_raise(MultiTenantSupport::InvalidTenantAccess) { @bezos.update_columns(name: 'JUFF BEZOS') }
+      assert_raise(MultiTenantSupport::InvalidTenantAccess) { @bezos.update_columns(name: 'JEFF BEZOS') }
 
       @bezos.reload
       assert_equal "Jeff Bezos", @bezos.name
@@ -184,7 +184,7 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_UpdateTest < ActiveSuppo
   ####
   test "raise error on update through update_column when user.account not matching current tenant" do
     MultiTenantSupport.under_tenant accounts(:facebook) do
-      assert_raise(MultiTenantSupport::InvalidTenantAccess) { @bezos.update_column(:name, 'JUFF BEZOS') }
+      assert_raise(MultiTenantSupport::InvalidTenantAccess) { @bezos.update_column(:name, 'JEFF BEZOS') }
     end
 
     MultiTenantSupport.under_tenant accounts(:amazon) do
@@ -195,7 +195,7 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_UpdateTest < ActiveSuppo
 
   test "raise error on update through update_column when missing current tenant and allow read across tenant" do
     MultiTenantSupport.allow_read_across_tenant do
-      assert_raise(MultiTenantSupport::InvalidTenantAccess) { @bezos.update_column(:name, 'JUFF BEZOS') }
+      assert_raise(MultiTenantSupport::InvalidTenantAccess) { @bezos.update_column(:name, 'JEFF BEZOS') }
 
       @bezos.reload
       assert_equal "Jeff Bezos", @bezos.name
@@ -213,7 +213,7 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_UpdateTest < ActiveSuppo
     _, err = capture_io do
       assert_raise MultiTenantSupport::MissingTenantError do
         User.upsert_all([
-          {name: 'JUFF BEZOS', email: 'bezos@example.com', created_at: Time.current, updated_at: Time.current},
+          {name: 'JEFF BEZOS', email: 'bezos@example.com', created_at: Time.current, updated_at: Time.current},
           {name: 'MARK ZUCKERBERG', email: 'zuck@example.com', created_at: Time.current, updated_at: Time.current},
           {name: 'New User', email: 'new.user@example.com', created_at: Time.current, updated_at: Time.current}
         ], unique_by: :email)
@@ -232,7 +232,7 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_UpdateTest < ActiveSuppo
       assert_difference 'User.count', 1 do
         _, err = capture_io do
           User.upsert_all([
-            {name: 'JUFF BEZOS', email: 'bezos@example.com', created_at: Time.current, updated_at: Time.current},
+            {name: 'JEFF BEZOS', email: 'bezos@example.com', created_at: Time.current, updated_at: Time.current},
             {name: 'MARK ZUCKERBERG', email: 'zuck@example.com', created_at: Time.current, updated_at: Time.current},
             {name: 'New User', email: 'new.user@example.com', created_at: Time.current, updated_at: Time.current}
           ], unique_by: :email)
@@ -240,7 +240,7 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_UpdateTest < ActiveSuppo
 
         assert_equal "[WARNING] You are using upsert_all(or upsert) which may update records across tenants\n", err
         assert User.find_by(email: 'new.user@example.com').account_id.nil?
-        assert_equal 'JUFF BEZOS', User.find_by(email: 'bezos@example.com').name
+        assert_equal 'JEFF BEZOS', User.find_by(email: 'bezos@example.com').name
         assert_equal 'MARK ZUCKERBERG', User.find_by(email: 'zuck@example.com').name
       end
     end
@@ -251,7 +251,7 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_UpdateTest < ActiveSuppo
       assert_difference 'User.count', 1 do
         _, err = capture_io do
           User.upsert_all([
-            {name: 'JUFF BEZOS', email: 'bezos@example.com', created_at: Time.current, updated_at: Time.current},
+            {name: 'JEFF BEZOS', email: 'bezos@example.com', created_at: Time.current, updated_at: Time.current},
             {name: 'MARK ZUCKERBERG', email: 'zuck@example.com', created_at: Time.current, updated_at: Time.current},
             {name: 'New User', email: 'new.user@example.com', created_at: Time.current, updated_at: Time.current}
           ], unique_by: :email)
@@ -270,7 +270,7 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_UpdateTest < ActiveSuppo
         assert_difference 'User.count', 1 do
           _, err = capture_io do
             User.upsert_all([
-              {name: 'JUFF BEZOS', email: 'bezos@example.com', created_at: Time.current, updated_at: Time.current},
+              {name: 'JEFF BEZOS', email: 'bezos@example.com', created_at: Time.current, updated_at: Time.current},
               {name: 'MARK ZUCKERBERG', email: 'zuck@example.com', created_at: Time.current, updated_at: Time.current},
               {name: 'New User', email: 'new.user@example.com', created_at: Time.current, updated_at: Time.current}
             ], unique_by: :email)
@@ -294,7 +294,7 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_UpdateTest < ActiveSuppo
 
     _, err = capture_io do
       assert_raise MultiTenantSupport::MissingTenantError do
-        User.upsert({name: 'JUFF BEZOS', email: 'bezos@example.com', created_at: Time.current, updated_at: Time.current}, unique_by: :email)
+        User.upsert({name: 'JEFF BEZOS', email: 'bezos@example.com', created_at: Time.current, updated_at: Time.current}, unique_by: :email)
         User.upsert({name: 'MARK ZUCKERBERG', email: 'zuck@example.com', created_at: Time.current, updated_at: Time.current}, unique_by: :email)
         User.upsert({name: 'New User', email: 'new.user@example.com', created_at: Time.current, updated_at: Time.current}, unique_by: :email)
       end
@@ -311,14 +311,14 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_UpdateTest < ActiveSuppo
     MultiTenantSupport.allow_read_across_tenant do
       assert_difference 'User.count', 1 do
         _, err = capture_io do
-          User.upsert({name: 'JUFF BEZOS', email: 'bezos@example.com', created_at: Time.current, updated_at: Time.current}, unique_by: :email)
+          User.upsert({name: 'JEFF BEZOS', email: 'bezos@example.com', created_at: Time.current, updated_at: Time.current}, unique_by: :email)
           User.upsert({name: 'MARK ZUCKERBERG', email: 'zuck@example.com', created_at: Time.current, updated_at: Time.current}, unique_by: :email)
           User.upsert({name: 'New User', email: 'new.user@example.com', created_at: Time.current, updated_at: Time.current}, unique_by: :email)
         end
 
         assert_includes err, "[WARNING] You are using upsert_all(or upsert) which may update records across tenants\n"
         assert User.find_by(email: 'new.user@example.com').account_id.nil?
-        assert_equal 'JUFF BEZOS', User.find_by(email: 'bezos@example.com').name
+        assert_equal 'JEFF BEZOS', User.find_by(email: 'bezos@example.com').name
         assert_equal 'MARK ZUCKERBERG', User.find_by(email: 'zuck@example.com').name
       end
     end
@@ -328,7 +328,7 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_UpdateTest < ActiveSuppo
     MultiTenantSupport.under_tenant(accounts(:apple)) do
       assert_difference 'User.count', 1 do
         _, err = capture_io do
-          User.upsert({name: 'JUFF BEZOS', email: 'bezos@example.com', created_at: Time.current, updated_at: Time.current}, unique_by: :email)
+          User.upsert({name: 'JEFF BEZOS', email: 'bezos@example.com', created_at: Time.current, updated_at: Time.current}, unique_by: :email)
           User.upsert({name: 'MARK ZUCKERBERG', email: 'zuck@example.com', created_at: Time.current, updated_at: Time.current}, unique_by: :email)
           User.upsert({name: 'New User', email: 'new.user@example.com', created_at: Time.current, updated_at: Time.current}, unique_by: :email)
         end
@@ -345,7 +345,7 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_UpdateTest < ActiveSuppo
       MultiTenantSupport.under_tenant(accounts(:apple)) do
         assert_difference 'User.count', 1 do
           _, err = capture_io do
-            User.upsert({name: 'JUFF BEZOS', email: 'bezos@example.com', created_at: Time.current, updated_at: Time.current}, unique_by: :email)
+            User.upsert({name: 'JEFF BEZOS', email: 'bezos@example.com', created_at: Time.current, updated_at: Time.current}, unique_by: :email)
             User.upsert({name: 'MARK ZUCKERBERG', email: 'zuck@example.com', created_at: Time.current, updated_at: Time.current}, unique_by: :email)
             User.upsert({name: 'New User', email: 'new.user@example.com', created_at: Time.current, updated_at: Time.current}, unique_by: :email)
           end
