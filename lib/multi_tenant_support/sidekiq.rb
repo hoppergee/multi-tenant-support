@@ -20,7 +20,10 @@ module MultiTenantSupport
           tenant_klass = msg["multi_tenant_support"]["class"].constantize
           tenant_id = msg["multi_tenant_support"]["id"]
           
-          tenant_account = tenant_klass.find tenant_id
+          tenant_account = nil
+          MultiTenantSupport.allow_read_across_tenant do
+            tenant_account = tenant_klass.find tenant_id
+          end
 
           MultiTenantSupport.under_tenant tenant_account do
             yield
