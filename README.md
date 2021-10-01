@@ -6,7 +6,7 @@ Multi-tenant buid on ActiveSupport::CurrentAttributes for Rails apps.
 Add this line to your application's Gemfile:
 
 ```ruby
-gem 'multi_tenant_support'
+gem 'multi-tenant-support'
 ```
 
 And then execute:
@@ -15,7 +15,7 @@ And then execute:
 
 Or install it yourself as:
 
-    $ gem install multi_tenant_support
+    $ gem install multi-tenant-support
 
 ## Usage
 
