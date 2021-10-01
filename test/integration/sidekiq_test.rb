@@ -14,9 +14,7 @@ class SidekiqIntegrationTest < ActiveSupport::TestCase
   end
 
   setup do
-    Sidekiq::Testing.server_middleware do |chain|
-      chain.add MultiTenantSupport::Sidekiq::Server
-    end
+    setup_sidekiq_middlewares
 
     Sidekiq::Testing.fake!
     UserNameUpdateWorker.jobs.clear
@@ -31,6 +29,8 @@ class SidekiqIntegrationTest < ActiveSupport::TestCase
     UserNameUpdateWorker.clear
     Sidekiq::Testing.disable!
     Sidekiq::Queues.clear_all
+
+    remove_sidekiq_middlewares
   end
 
   test "successfully update user name when tenant_account is correct" do
@@ -68,6 +68,55 @@ class SidekiqIntegrationTest < ActiveSupport::TestCase
 
     MultiTenantSupport.under_tenant(accounts(:amazon)) do
       refute_equal "Jeff Bezos UPDATE", @bezos.reload.name
+    end
+  end
+
+  def setup_sidekiq_middlewares
+    Sidekiq::Testing.server_middleware do |chain|
+      chain.add MultiTenantSupport::Sidekiq::Server
+    end
+
+    Sidekiq.configure_client do |config|
+      config.client_middleware do |chain|
+        chain.add MultiTenantSupport::Sidekiq::Client
+      end
+    end
+
+    Sidekiq.configure_server do |config|
+      config.client_middleware do |chain|
+        chain.add MultiTenantSupport::Sidekiq::Client
+      end
+
+      config.server_middleware do |chain|
+        if defined?(Sidekiq::Middleware::Server::RetryJobs)
+          chain.insert_before Sidekiq::Middleware::Server::RetryJobs, MultiTenantSupport::Sidekiq::Server
+        elsif defined?(Sidekiq::Batch::Server)
+          chain.insert_before Sidekiq::Batch::Server, MultiTenantSupport::Sidekiq::Server
+        else
+          chain.add MultiTenantSupport::Sidekiq::Server
+        end
+      end
+    end
+  end
+
+  def remove_sidekiq_middlewares
+    Sidekiq::Testing.server_middleware do |chain|
+      chain.remove MultiTenantSupport::Sidekiq::Server
+    end
+
+    Sidekiq.configure_client do |config|
+      config.client_middleware do |chain|
+        chain.remove MultiTenantSupport::Sidekiq::Client
+      end
+    end
+
+    Sidekiq.configure_server do |config|
+      config.client_middleware do |chain|
+        chain.remove MultiTenantSupport::Sidekiq::Client
+      end
+      config.server_middleware do |chain|
+        chain.remove MultiTenantSupport::Sidekiq::Server
+      end
     end
   end
 
