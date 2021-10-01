@@ -23,6 +23,7 @@ class SidekiqJobsManager
   def clear_jobs
     Sidekiq::ScheduledSet.new.clear
     Sidekiq::Queue.new("integration_tests").clear
+    Sidekiq::RetrySet.new.clear
   end
 
   def start_workers

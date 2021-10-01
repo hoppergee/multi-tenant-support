@@ -19,3 +19,21 @@ if ActiveSupport::TestCase.respond_to?(:fixture_path=)
   ActiveSupport::TestCase.file_fixture_path = ActiveSupport::TestCase.fixture_path + "/files"
   ActiveSupport::TestCase.fixtures :all
 end
+
+
+class ActiveSupport::TestCase
+  self.use_transactional_tests = false
+end
+
+require 'support/sidekiq_jobs_manager'
+require 'multi_tenant_support/active_job'
+SidekiqJobsManager.instance.start_workers
+
+Minitest.after_run do
+  SidekiqJobsManager.instance.stop_workers
+  SidekiqJobsManager.instance.clear_jobs
+
+  ActiveRecord::Tasks::DatabaseTasks.truncate_all(
+    ActiveSupport::StringInquirer.new("test")
+  )
+end
