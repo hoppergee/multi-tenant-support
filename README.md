@@ -1,6 +1,15 @@
 # MultiTenantSupport
 
-Multi-tenant buid on ActiveSupport::CurrentAttributes for Rails apps.
+Build a highly secure, multi-tenant rails app without data leak.
+
+Keep your data secure with multi-tenant-support. Prevent most ActiveRecord CRUD methods to action across tenant, ensuring no one can accidentally or intentionally access other tenants' data. This can be crucial for applications handling sensitive information like financial information, intellectual property, and so forth.
+
+- Prevent most ActiveRecord CRUD methods from acting across tenants.
+- Support Row-level Multitenancy
+- Build on ActiveSupport::CurrentAttributes offered by rails
+- Auto set current tenant through subdomain and domain in controller
+- Support ActiveJob and Sidekiq
+
 ## Installation
 
 Add this line to your application's Gemfile:
