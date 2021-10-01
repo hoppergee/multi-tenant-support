@@ -7,6 +7,8 @@ require_relative "../test/dummy/config/environment"
 ActiveRecord::Migrator.migrations_paths = [File.expand_path("../test/dummy/db/migrate", __dir__)]
 require "rails/test_help"
 
+ActiveRecord::Migration.maintain_test_schema!
+
 require "rails/test_unit/reporter"
 Rails::TestUnitReporter.executable = 'bin/test'
 
