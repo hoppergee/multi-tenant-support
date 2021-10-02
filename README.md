@@ -12,23 +12,85 @@ Keep your data secure with multi-tenant-support. Prevent most ActiveRecord CRUD 
 
 ## Installation
 
-Add this line to your application's Gemfile:
+1. Add this line to your application's Gemfile:
+
+    ```ruby
+    gem 'multi-tenant-support'
+    ```
+
+2. And then execute:
+
+    ```
+    bundle install
+    ```
+
+3. Add domain and subdomain to your tenant account table (Skip if your rails app already did this)
+
+    ```
+    rails generate multi_tenant_support:migration
+    rails db:migrate
+    ```
+
+4. Create an initializer
+
+    ```
+    rails generate multi_tenant_support:initializer
+    ```
+
+5. Set `tenant_account_class_name` to your tenant account model name in `multi_tenant_support.rb`
+
+    ```ruby
+    --- config.tenant_account_class_name = 'REPLACE_ME'
+    +++ config.tenant_account_class_name = 'Account'
+    ```
+
+6. Set `host` to your app's domain in `multi_tenant_support.rb`
+
+    ```ruby
+    --- config.host = 'REPLACE.ME'
+    +++ config.host = 'your-app-domain.com'
+    ```
+
+7. Setup for ActiveJob or Sidekiq
+
+    If you are using ActiveJob
+
+    ```ruby
+    --- # require 'multi_tenant_support/active_job'
+    +++ require 'multi_tenant_support/active_job'
+    ```
+
+    If you are using sidekiq without ActiveJob
+
+    ```ruby
+    --- # require 'multi_tenant_support/sidekiq'
+    +++ require 'multi_tenant_support/sidekiq'
+    ```
+
+8. Add `belongs_to_tenant` to all models which you want to scope under tenant
+
+    ```ruby
+    class User < ApplicationRecord
+      belongs_to_tenant :account
+    end
+    ```
+
+## Example
+
+#### Database Schema
 
 ```ruby
-gem 'multi-tenant-support'
+create_table "accounts", force: :cascade do |t|
+  t.bigint "domain"
+  t.bigint "subdomain"
+end
+
+create_table "users", force: :cascade do |t|
+  t.bigint "account_id"
+end
 ```
 
-And then execute:
-
-    $ bundle install
-
-Or install it yourself as:
-
-    $ gem install multi-tenant-support
-
-## Usage
-
-Create a initialize file:
+#### Initializer
 
 ```ruby
 # config/initializers/multi_tenant_support.rb
@@ -46,6 +108,29 @@ MultiTenantSupport.configure do
   app do |config|
     config.excluded_subdomains = ['www']
     config.host = 'example.com'
+  end
+end
+```
+
+#### Model
+
+```ruby
+class Account < AppplicationRecord
+  has_many :users
+end
+
+class User < ApplicationRecord
+  belongs_to_tenant :account
+end
+```
+
+#### Controler
+
+```ruby
+class UsersController < ApplicationController
+  def show
+    @user = User.find(params[:id]) # This result is already scope under current_tenant_account
+    @you_can_get_account = current_tenant_account
   end
 end
 ```
