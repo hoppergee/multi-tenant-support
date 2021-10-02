@@ -18,7 +18,7 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_LoadTest < ActiveSupport
 
   test 'zuck can only initialize under facebook' do
     MultiTenantSupport.under_tenant accounts(:amazon) do
-      assert_raise(ActiveRecord::RecordNotFound) {  users(:zuck) }
+      assert_raise(ActiveRecord::RecordNotFound) {  users(:zuck).reload }
     end
 
     MultiTenantSupport.under_tenant accounts(:facebook) do
