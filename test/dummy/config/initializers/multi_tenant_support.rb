@@ -1,7 +1,15 @@
 MultiTenantSupport.configure do |config|
-  config.tenant_account_class = 'Account'
-  config.primary_key = :id
-  config.excluded_subdomains = ['www']
-  config.current_tenant_account_method = :current_tenant_account
-  config.host = 'example.com'
+  model do |config|
+    config.tenant_account_class_name = 'Account'
+    config.tenant_account_primary_key = :id
+  end
+
+  controller do |config|
+    config.current_tenant_account_method = :current_tenant_account
+  end
+
+  app do |config|
+    config.excluded_subdomains = ['www']
+    config.host = 'example.com'
+  end
 end

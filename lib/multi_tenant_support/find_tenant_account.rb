@@ -4,7 +4,7 @@ module MultiTenantSupport
 
       def call(subdomains:, domain:)
         subdomain = subdomains.select do |subdomain|
-          configuration.excluded_subdomains.none? do |excluded_subdomain|
+          excluded_subdomains.none? do |excluded_subdomain|
             excluded_subdomain.to_s.downcase == subdomain.to_s.downcase
           end
         end.last.presence
@@ -19,11 +19,11 @@ module MultiTenantSupport
       end
 
       def tenant_account_class
-        configuration.tenant_account_class.constantize
+        MultiTenantSupport.model.tenant_account_class_name.constantize
       end
 
-      def configuration
-        MultiTenantSupport.configuration
+      def excluded_subdomains
+        MultiTenantSupport.app.excluded_subdomains
       end
 
     end

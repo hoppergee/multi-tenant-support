@@ -6,20 +6,28 @@ class MultiTenantSupportTest < ActiveSupport::TestCase
   end
 
   test ".configure" do
-    MultiTenantSupport.configure do |config|
-      config.tenant_account_class = 'Account'
-      config.primary_key = :id
-      config.excluded_subdomains = ['www']
-      config.current_tenant_account_method = :current_tenant_account
-      config.host = 'example.com'
+    MultiTenantSupport.configure do
+      model do |config|
+        config.tenant_account_class_name = 'Account'
+        config.tenant_account_primary_key = :id
+      end
+
+      controller do |config|
+        config.current_tenant_account_method = :current_tenant_account
+      end
+
+      app do |config|
+        config.excluded_subdomains = ['www']
+        config.host = 'example.com'
+      end
     end
 
-    assert_equal :current_tenant_account, MultiTenantSupport.current_tenant_account_method
-
-    configuration = MultiTenantSupport.configuration
-    assert_equal :id, configuration.primary_key
-    assert_equal ['www'], configuration.excluded_subdomains
-    assert_equal 'example.com', configuration.host
+    assert_equal :id, MultiTenantSupport.model.tenant_account_primary_key
+    assert_equal 'Account', MultiTenantSupport.model.tenant_account_class_name
+    assert_equal :account_id, MultiTenantSupport.model.default_foreign_key
+    assert_equal :current_tenant_account, MultiTenantSupport.controller.current_tenant_account_method
+    assert_equal ['www'], MultiTenantSupport.app.excluded_subdomains
+    assert_equal 'example.com', MultiTenantSupport.app.host
   end
 
   test ".tenant_account" do

@@ -1,6 +1,8 @@
 require "multi_tenant_support/version"
 require "multi_tenant_support/errors"
-require "multi_tenant_support/configuration"
+require "multi_tenant_support/config/app"
+require "multi_tenant_support/config/controller"
+require "multi_tenant_support/config/model"
 require "multi_tenant_support/current"
 require "multi_tenant_support/find_tenant_account"
 require "multi_tenant_support/concern/controller_concern"
@@ -10,16 +12,8 @@ module MultiTenantSupport
 
   module_function
 
-  def configure
-    yield configuration
-  end
-
-  def configuration
-    @configuration ||= Configuration.new
-  end
-
-  def current_tenant_account_method
-    configuration.current_tenant_account_method
+  def configure(&block)
+    instance_eval(&block)
   end
 
   def current_tenant
@@ -27,7 +21,7 @@ module MultiTenantSupport
   end
 
   def current_tenant_id
-    Current.tenant_account&.send(configuration.primary_key)
+    Current.tenant_account&.send(model.tenant_account_primary_key)
   end
 
   def under_tenant(tenant_account, &block)

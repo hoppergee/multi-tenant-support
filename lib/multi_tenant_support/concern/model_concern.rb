@@ -5,7 +5,7 @@ module MultiTenantSupport
     class_methods do
 
       def belongs_to_tenant(name, **options)
-        options[:foreign_key] ||= MultiTenantSupport.configuration.foreign_key
+        options[:foreign_key] ||= MultiTenantSupport.model.default_foreign_key
         belongs_to name.to_sym, **options
 
         set_default_scope_under_current_tenant(options[:foreign_key])
@@ -26,7 +26,7 @@ module MultiTenantSupport
         scope :scope_under_current_tenant, lambda {
           raise MissingTenantError unless MultiTenantSupport.current_tenant
 
-          tenant_account_primary_key = MultiTenantSupport.configuration.primary_key
+          tenant_account_primary_key = MultiTenantSupport.model.tenant_account_primary_key
           tenant_account_id = MultiTenantSupport.current_tenant.send(tenant_account_primary_key)
           where(foreign_key => tenant_account_id)
         }
