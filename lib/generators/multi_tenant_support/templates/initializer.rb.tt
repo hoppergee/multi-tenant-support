@@ -1,0 +1,21 @@
+MultiTenantSupport.configure do
+  model do |config|
+    config.tenant_account_class_name = 'REPLACE_ME'
+    config.tenant_account_primary_key = :id
+  end
+
+  controller do |config|
+    config.current_tenant_method_name = :current_tenant_account
+  end
+
+  app do |config|
+    config.excluded_subdomains = ['www']
+    config.host = 'REPLACE.ME'
+  end
+end
+
+# Uncomment if you are using sidekiq without ActiveJob
+# require 'multi_tenant_support/sidekiq'
+
+# Uncomment if you are using ActiveJob
+# require 'multi_tenant_support/active_job'
