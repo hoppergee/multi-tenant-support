@@ -20,9 +20,14 @@ if ActiveSupport::TestCase.respond_to?(:fixture_path=)
   ActiveSupport::TestCase.fixtures :all
 end
 
+require 'support/dsl'
 
 class ActiveSupport::TestCase
+  include MultiTenantSupport::DSL
+
   self.use_transactional_tests = false
+
+  setup { setup_users }
 end
 
 require 'support/sidekiq_jobs_manager'
