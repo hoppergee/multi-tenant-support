@@ -192,4 +192,13 @@ ActiveSupport.on_load(:active_record) do |base|
     end
   }
   ActiveRecord::Relation.prepend override_delete_all
+
+  override_update_all = Module.new {
+    define_method :update_all do |updates|
+      raise MultiTenantSupport::MissingTenantError unless MultiTenantSupport.current_tenant
+
+      super(updates)
+    end
+  }
+  ActiveRecord::Relation.prepend override_update_all
 end
