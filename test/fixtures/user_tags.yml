@@ -1,0 +1,14 @@
+entrepreneur_zuck:
+  account: amazon
+  tag: entrepreneur
+  user: zuck
+
+entrepreneur_bezos:
+  account: amazon
+  tag: entrepreneur
+  user: bezos
+
+entrepreneur_steve:
+  account: apple
+  tag: entrepreneur
+  user: steve
