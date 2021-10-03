@@ -4,7 +4,7 @@ require 'test_helper'
 class ModelDestroyProtectTest < ActiveSupport::TestCase
 
   ####
-  # .destroy
+  #     #destroy
   ####
   test "can destroy by tenant" do
     within_a_request_of amazon do
@@ -41,7 +41,7 @@ class ModelDestroyProtectTest < ActiveSupport::TestCase
   end
 
   ####
-  # .destroy!
+  #     #destroy!
   ####
   test "can destroy! by tenant" do
     within_a_request_of amazon do
