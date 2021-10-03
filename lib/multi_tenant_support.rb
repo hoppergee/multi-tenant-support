@@ -1,4 +1,5 @@
 require "multi_tenant_support/version"
+require 'multi_tenant_support/railtie'
 require "multi_tenant_support/errors"
 require "multi_tenant_support/config/app"
 require "multi_tenant_support/config/controller"
