@@ -8,7 +8,7 @@ class ModelDeleteAllProtectTest < ActiveSupport::TestCase
   ####
   test "can only delete records under the tenant" do
     within_a_request_of amazon do
-      assert_delete_all -1
+      assert_delete_all(-1)
     end
   end
 
@@ -29,7 +29,7 @@ class ModelDeleteAllProtectTest < ActiveSupport::TestCase
   test 'can delete scoped records by super admin through manual set current tenant' do
     within_a_request_of super_admin do
       under_tenant amazon do
-        assert_delete_all -1
+        assert_delete_all(-1)
       end
     end
   end
