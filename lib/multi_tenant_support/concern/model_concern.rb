@@ -70,15 +70,6 @@ module MultiTenantSupport
         }
         extend override_upsert_all
 
-        override_update_all = Module.new {
-          define_method :update_all do |updates|
-            raise MissingTenantError unless MultiTenantSupport.current_tenant
-
-            super(updates)
-          end
-        }
-        extend override_update_all
-
         after_initialize do |object|
           if MultiTenantSupport.disallow_read_across_tenant? || object.new_record?
             raise MissingTenantError unless MultiTenantSupport.current_tenant
@@ -190,7 +181,9 @@ ActiveSupport.on_load(:active_record) do |base|
 
   override_update_all = Module.new {
     define_method :update_all do |updates|
-      raise MultiTenantSupport::MissingTenantError unless MultiTenantSupport.current_tenant
+      current_tenant_exist = MultiTenantSupport.current_tenant
+      is_global_model = !MultiTenantSupport.model.tenanted_models.include?(klass.name)
+      raise MultiTenantSupport::MissingTenantError unless current_tenant_exist || is_global_model
 
       super(updates)
     end
