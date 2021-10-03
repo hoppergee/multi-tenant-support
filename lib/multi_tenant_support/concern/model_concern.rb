@@ -92,6 +92,7 @@ module MultiTenantSupport
 
         override_update_columns_module = Module.new {
           define_method :update_columns do |attributes|
+            raise MissingTenantError unless MultiTenantSupport.current_tenant
             raise NilTenantError if send(foreign_key).nil?
             raise InvalidTenantAccess if send(foreign_key) != MultiTenantSupport.current_tenant_id
 

@@ -9,52 +9,6 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_UpdateTest < ActiveSuppo
   end
 
   ####
-  # .update_columns
-  ####
-  test "raise error on update through update_columns when user.account not matching current tenant" do
-    MultiTenantSupport.under_tenant accounts(:facebook) do
-      assert_raise(MultiTenantSupport::InvalidTenantAccess) { @bezos.update_columns(name: 'JEFF BEZOS') }
-    end
-
-    MultiTenantSupport.under_tenant accounts(:amazon) do
-      @bezos.reload
-      assert_equal "Jeff Bezos", @bezos.name
-    end
-  end
-
-  test "raise error on update through update_columns when missing current tenant and allow read across tenant" do
-    MultiTenantSupport.allow_read_across_tenant do
-      assert_raise(MultiTenantSupport::InvalidTenantAccess) { @bezos.update_columns(name: 'JEFF BEZOS') }
-
-      @bezos.reload
-      assert_equal "Jeff Bezos", @bezos.name
-    end
-  end
-
-  ####
-  # .update_column
-  ####
-  test "raise error on update through update_column when user.account not matching current tenant" do
-    MultiTenantSupport.under_tenant accounts(:facebook) do
-      assert_raise(MultiTenantSupport::InvalidTenantAccess) { @bezos.update_column(:name, 'JEFF BEZOS') }
-    end
-
-    MultiTenantSupport.under_tenant accounts(:amazon) do
-      @bezos.reload
-      assert_equal "Jeff Bezos", @bezos.name
-    end
-  end
-
-  test "raise error on update through update_column when missing current tenant and allow read across tenant" do
-    MultiTenantSupport.allow_read_across_tenant do
-      assert_raise(MultiTenantSupport::InvalidTenantAccess) { @bezos.update_column(:name, 'JEFF BEZOS') }
-
-      @bezos.reload
-      assert_equal "Jeff Bezos", @bezos.name
-    end
-  end
-
-  ####
   # .upsert_all
   ####
   test ".upsert_all - won't succes when disallow read across tenant and tenant is missing" do
