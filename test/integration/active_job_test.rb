@@ -19,7 +19,7 @@ class ActiveJobIntegrationTest < ActiveSupport::TestCase
       UserNameUpdateJob.perform_later(@bezos)
     end
 
-    sleep 0.1
+    sleep 0.2
 
     MultiTenantSupport.under_tenant(accounts(:amazon)) do
       assert_equal "Jeff Bezos UPDATE", @bezos.reload.name
