@@ -100,6 +100,7 @@ module MultiTenantSupport
           end
 
           define_method :update_column do |name, value|
+            raise MissingTenantError unless MultiTenantSupport.current_tenant
             raise NilTenantError if send(foreign_key).nil?
             raise InvalidTenantAccess if send(foreign_key) != MultiTenantSupport.current_tenant_id
 
