@@ -19,7 +19,7 @@ class ActiveJobIntegrationTest < ActiveSupport::TestCase
       UserNameUpdateJob.perform_later(@bezos)
     end
 
-    sleep 0.2
+    sleep 0.5
 
     MultiTenantSupport.under_tenant(accounts(:amazon)) do
       assert_equal "Jeff Bezos UPDATE", @bezos.reload.name
@@ -49,7 +49,7 @@ class ActiveJobIntegrationTest < ActiveSupport::TestCase
       UserNameUpdateJob.perform_later(@bezos)
     end
 
-    sleep 0.1
+    sleep 0.2
 
     Sidekiq.redis do |connection|
       retries = connection.zrange "retry", 0, -1
