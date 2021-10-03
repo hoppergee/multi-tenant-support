@@ -10,6 +10,35 @@ Keep your data secure with multi-tenant-support. Prevent most ActiveRecord CRUD 
 - Auto set current tenant through subdomain and domain in controller
 - Support ActiveJob and Sidekiq
 
+| Model methods                      | Protect     |
+| ---------------------------------- | ----------- |
+| count                              | 🔒           |
+| first                              | 🔒           |
+| last                               | 🔒           |
+| where                              | 🔒           |
+| find_by                            | 🔒           |
+| reload                             | 🔒           |
+| new                                | 🔒           |
+| build                              | 🔒           |
+| save, save!, save(validate: false) | 🔒           |
+| create, create!                    | 🔒           |
+| insert, insert!                    | 🔒           |
+| insert_all, insert_all!            | 🔒           |
+| `ACCOUNT=`, `ACCOUNT_ID=`          | 🔒           |
+| update                             | 🔒           |
+| update_all                         | 🔒           |
+| update_attribute                   | 🔒           |
+| update_columns                     | 🔒           |
+| update_column                      | 🔒           |
+| upsert_all                         | ⚠️ (Partial) |
+| upsert                             | 🔒           |
+| destroy, destroy!                  | 🔒           |
+| destroy_all                        | 🔒           |
+| destroy_by                         | 🔒           |
+| delete_all                         | 🔒           |
+| delete_by                          | 🔒           |
+| unscoped                           | 🔒           |
+
 ## Installation
 
 1. Add this line to your application's Gemfile:
