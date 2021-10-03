@@ -1,7 +1,7 @@
 require 'test_helper'
 
 
-class ModelDestroyAllOnAssociationProtectTest < ActiveSupport::TestCase
+class ModelDestroyAllOnCollectionProtectTest < ActiveSupport::TestCase
 
   ####
   # .destroy_all
