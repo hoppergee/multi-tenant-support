@@ -82,7 +82,78 @@ Keep your data secure with multi-tenant-support. Prevent most ActiveRecord CRUD 
     end
     ```
 
-## Example
+## Usage
+
+#### Get current 
+
+Get current tenant through:
+
+```ruby
+MultiTenantSupport.current_tenant
+```
+
+#### Switch tenant
+
+You can switch to another tenant temporary through:
+
+```ruby
+MultiTenantSupport.under_tenant amazon do
+  # Do things under amazon account
+end
+```
+
+#### Disallow read across tenant by default
+
+This gem disallow read across tenant by default. You can check current state through:
+
+```ruby
+MultiTenantSupport.disallow_read_across_tenant?
+```
+
+#### Allow read across tenant for super admin
+
+You can turn on the permission to read records across tenant through: 
+
+```ruby
+MultiTenantSupport.allow_read_across_tenant
+
+# Or
+MultiTenantSupport.allow_read_across_tenant do
+  # ...
+end
+```
+
+You can put it in a before action in SuperAdmin's controllers
+
+#### Disallow modify records tenant
+
+This gem disallow modify record across tenant no matter you are super admin or not.
+
+If `MultiTenantSupport.current_tenant` exist, you can only modify those records under this tenant, otherwise, you will get some errors like:
+
+- `MultiTenantSupport::MissingTenantError`
+- `MultiTenantSupport::ImmutableTenantError`
+- `MultiTenantSupport::NilTenantError`
+- `MultiTenantSupport::InvalidTenantAccess`
+- `ActiveRecord::RecordNotFound`
+
+If `MultiTenantSupport.current_tenant` is missing, you cannot modify or create any tenanted records.
+
+#### Set current tenant acccount in controller by default
+
+This gem has set a before action `set_current_tenant_account` on ActionController. It search tenant by subdomain or domain. Do remember to `skip_before_action :set_current_tenant_account` in super admin controllers.
+
+Feel free to override it, if the finder behaviour is not what you want.
+
+#### upsert_all
+
+Currently, we don't have a good way to protect this method. So please use `upser_all` carefully.
+
+#### Unscoped
+
+This gem has override `unscoped` to prevent the default tenant scope be scoped out. But if you really want to scope out the default tenant scope, you can use `unscope_tenant`.
+
+## Code Example
 
 #### Database Schema
 
