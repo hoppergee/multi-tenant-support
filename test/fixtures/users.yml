@@ -2,13 +2,16 @@ bezos:
   name: Jeff Bezos
   email: bezos@example.com
   account: amazon
+  country: us
 
 zuck:
   name: Mark Zuckerberg
   email: zuck@example.com
   account: facebook
+  country: us
 
 steve:
   name: Steve Jobs
   email: steve@example.com
   account: apple
+  country: us
