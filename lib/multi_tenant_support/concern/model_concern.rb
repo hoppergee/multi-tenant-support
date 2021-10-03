@@ -85,6 +85,7 @@ module MultiTenantSupport
         end
 
         before_save do |object|
+          raise MissingTenantError unless MultiTenantSupport.current_tenant
           raise NilTenantError if object.send(foreign_key).nil?
           raise InvalidTenantAccess if object.send(foreign_key) != MultiTenantSupport.current_tenant_id
         end
