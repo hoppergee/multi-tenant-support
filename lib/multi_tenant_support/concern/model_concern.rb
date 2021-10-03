@@ -170,4 +170,13 @@ end
 
 ActiveSupport.on_load(:active_record) do |base|
   base.include MultiTenantSupport::ModelConcern
+
+  override_delete_all = Module.new {
+    define_method :delete_all do
+      raise MultiTenantSupport::MissingTenantError unless MultiTenantSupport.current_tenant
+
+      super()
+    end
+  }
+  ActiveRecord::Relation.prepend override_delete_all
 end
