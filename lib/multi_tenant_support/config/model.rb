@@ -4,7 +4,8 @@ module MultiTenantSupport
     class Model
       attr_writer :tenant_account_class_name,
                   :tenant_account_primary_key,
-                  :default_foreign_key
+                  :default_foreign_key,
+                  :tenanted_models
 
       def tenant_account_class_name
         @tenant_account_class_name || raise("tenant_account_class_name is missing")
@@ -16,6 +17,10 @@ module MultiTenantSupport
 
       def default_foreign_key
         @default_foreign_key ||= "#{tenant_account_class_name.underscore}_id".to_sym
+      end
+
+      def tenanted_models
+        @tenanted_models ||= []
       end
     end
 

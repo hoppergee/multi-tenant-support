@@ -33,4 +33,11 @@ class MultiTenantSupport::Config::ModelTest < ActiveSupport::TestCase
     assert_equal :tenant_account_id, @model_config.default_foreign_key
   end
 
+  test "#tenanted_models and #tenanted_models=" do
+    assert_equal [], @model_config.tenanted_models
+
+    @model_config.tenanted_models << 'User'
+    assert_equal ['User'], @model_config.tenanted_models
+  end
+
 end
