@@ -10,6 +10,8 @@ module MultiTenantSupport
 
         set_default_scope_under_current_tenant(options[:foreign_key])
         set_tenant_account_readonly(name, options[:foreign_key])
+
+        MultiTenantSupport.model.tenanted_models << self.name
       end
 
       private
@@ -120,15 +122,6 @@ module MultiTenantSupport
         }
         include override_delete
 
-        override_delete_all = Module.new {
-          define_method :delete_all do
-            raise MissingTenantError unless MultiTenantSupport.current_tenant
-
-            super()
-          end
-        }
-        extend override_delete_all
-
         override_delete_by = Module.new {
           define_method :delete_by do |*args|
             raise MissingTenantError unless MultiTenantSupport.current_tenant
@@ -186,7 +179,9 @@ ActiveSupport.on_load(:active_record) do |base|
 
   override_delete_all = Module.new {
     define_method :delete_all do
-      raise MultiTenantSupport::MissingTenantError unless MultiTenantSupport.current_tenant
+      current_tenant_exist = MultiTenantSupport.current_tenant
+      is_global_model = !MultiTenantSupport.model.tenanted_models.include?(klass.name)
+      raise MultiTenantSupport::MissingTenantError unless current_tenant_exist || is_global_model
 
       super()
     end
