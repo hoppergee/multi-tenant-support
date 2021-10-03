@@ -27,7 +27,14 @@ Keep your data secure with multi-tenant-support. Prevent most ActiveRecord CRUD 
 3. Add domain and subdomain to your tenant account table (Skip if your rails app already did this)
 
     ```
-    rails generate multi_tenant_support:migration
+    rails generate multi_tenant_support:migration YOUR_TENANT_ACCOUNT_TABLE_OR_MODEL_NAME
+
+    # Say your tenant account table is "accounts"
+    rails generate multi_tenant_support:migration accounts
+
+    # You can also run it with the tenant account model name
+    # rails generate multi_tenant_support:migration Account
+
     rails db:migrate
     ```
 
