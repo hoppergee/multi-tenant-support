@@ -3,18 +3,10 @@ require 'test_helper'
 class MultiTenantSupport::ModelConcern::BelongsToTenant_CreateTest < ActiveSupport::TestCase
 
   ####
-  # .create, .create!, .insert and insert!
+  # .insert and insert!
   ####
-  test "create/insert - auto set tenant account on creation" do
+  test "insert - auto set tenant account on creation" do
     MultiTenantSupport.under_tenant accounts(:amazon) do
-      assert_difference 'User.count', 1 do
-        john = User.create(name: 'john', email: 'john@example.com')
-        assert_equal accounts(:amazon), john.account
-      end
-
-      jack = User.create!(name: 'jack', email: 'jack@example.com')
-      assert_equal accounts(:amazon), jack.account
-
       assert_difference 'User.count', 1 do
         User.insert({name: 'tom', email: 'tom@example.com', created_at: Time.current, updated_at: Time.current})
         assert_equal accounts(:amazon), User.find_by(name: 'tom').account
@@ -27,17 +19,13 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_CreateTest < ActiveSuppo
     end
   end
 
-  test "create/insert - raise error on missing tenant when not allow read across tenant (default)" do
-    assert_raise(MultiTenantSupport::MissingTenantError) { User.create(email: 'test@test.com') }
-    assert_raise(MultiTenantSupport::MissingTenantError) { User.create!(email: 'test@test.com') }
+  test "insert - raise error on missing tenant when not allow read across tenant (default)" do
     assert_raise(MultiTenantSupport::MissingTenantError) { User.insert({email: 'test@test.com'}) }
     assert_raise(MultiTenantSupport::MissingTenantError) { User.insert!({email: 'test@test.com'}) }
   end
 
-  test "create/insert - raise error on missing tenant when allow read across tenant" do
+  test "insert - raise error on missing tenant when allow read across tenant" do
     MultiTenantSupport.allow_read_across_tenant do
-      assert_raise(MultiTenantSupport::MissingTenantError) { User.create(email: 'test@test.com') }
-      assert_raise(MultiTenantSupport::MissingTenantError) { User.create!(email: 'test@test.com') }
       assert_raise(MultiTenantSupport::MissingTenantError) { User.insert({email: 'test@test.com'}) }
       assert_raise(MultiTenantSupport::MissingTenantError) { User.insert!({email: 'test@test.com'}) }
     end
