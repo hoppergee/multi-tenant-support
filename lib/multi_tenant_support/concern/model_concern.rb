@@ -107,6 +107,16 @@ module MultiTenantSupport
 
         include override_update_columns_module
 
+        override_delete = Module.new {
+          define_method :delete do
+            raise MissingTenantError unless MultiTenantSupport.current_tenant
+            raise InvalidTenantAccess if send(foreign_key) != MultiTenantSupport.current_tenant_id
+
+            super()
+          end
+        }
+        include override_delete
+
         override_delete_all = Module.new {
           define_method :delete_all do
             raise MissingTenantError unless MultiTenantSupport.current_tenant
