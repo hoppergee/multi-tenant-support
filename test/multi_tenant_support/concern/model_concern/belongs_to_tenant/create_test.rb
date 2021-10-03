@@ -3,14 +3,10 @@ require 'test_helper'
 class MultiTenantSupport::ModelConcern::BelongsToTenant_CreateTest < ActiveSupport::TestCase
 
   ####
-  # .save, .create, .create!, .insert and insert!
+  # .create, .create!, .insert and insert!
   ####
   test "create/insert - auto set tenant account on creation" do
     MultiTenantSupport.under_tenant accounts(:amazon) do
-      kate = User.new(name: 'kate', email: 'kate@example.com')
-      assert kate.save
-      assert_equal accounts(:amazon), kate.account
-
       assert_difference 'User.count', 1 do
         john = User.create(name: 'john', email: 'john@example.com')
         assert_equal accounts(:amazon), john.account
@@ -34,10 +30,6 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_CreateTest < ActiveSuppo
   test "create/insert - raise error on missing tenant when not allow read across tenant (default)" do
     assert_raise(MultiTenantSupport::MissingTenantError) { User.create(email: 'test@test.com') }
     assert_raise(MultiTenantSupport::MissingTenantError) { User.create!(email: 'test@test.com') }
-    assert_raise(MultiTenantSupport::MissingTenantError) do
-      u = User.new(email: 'test@test.com')
-      u.save
-    end
     assert_raise(MultiTenantSupport::MissingTenantError) { User.insert({email: 'test@test.com'}) }
     assert_raise(MultiTenantSupport::MissingTenantError) { User.insert!({email: 'test@test.com'}) }
   end
@@ -46,10 +38,6 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_CreateTest < ActiveSuppo
     MultiTenantSupport.allow_read_across_tenant do
       assert_raise(MultiTenantSupport::MissingTenantError) { User.create(email: 'test@test.com') }
       assert_raise(MultiTenantSupport::MissingTenantError) { User.create!(email: 'test@test.com') }
-      assert_raise(MultiTenantSupport::MissingTenantError) do
-        u = User.new(email: 'test@test.com')
-        u.save
-      end
       assert_raise(MultiTenantSupport::MissingTenantError) { User.insert({email: 'test@test.com'}) }
       assert_raise(MultiTenantSupport::MissingTenantError) { User.insert!({email: 'test@test.com'}) }
     end
