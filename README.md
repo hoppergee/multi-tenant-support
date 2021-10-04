@@ -2,6 +2,8 @@
 
 [![Test](https://github.com/hoppergee/multi-tenant-support/actions/workflows/main.yaml/badge.svg?branch=main&event=release)](https://github.com/hoppergee/multi-tenant-support/actions/workflows/main.yaml)
 
+![](./active_record_methods_protect.png)
+
 Build a highly secure, multi-tenant rails app without data leak.
 
 Keep your data secure with multi-tenant-support. Prevent most ActiveRecord CRUD methods to action across tenant, ensuring no one can accidentally or intentionally access other tenants' data. This can be crucial for applications handling sensitive information like financial information, intellectual property, and so forth.
