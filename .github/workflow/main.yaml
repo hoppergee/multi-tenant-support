@@ -1,18 +1,54 @@
-name: Ruby
+name: Test
 
-on: [push,pull_request]
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - "*"
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
+    name: ruby-${{ matrix.ruby }} ${{ matrix.rails }}
+    strategy:
+      matrix:
+        ruby: ['2.6', '2.7', '3.0']
+        rails: ['6.0', '6.1']
+
+    env:
+      BUNDLE_GEMFILE: ${{ github.workspace }}/gemfiles/github-action/rails-${{ matrix.rails }}-Gemfile
+      BUNDLE_PATH_RELATIVE_TO_CWD: true
+      DATABASE_USERNAME: postgres
+
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Ruby
-      uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: 3.0.1
-    - name: Run the default task
-      run: |
-        gem install bundler -v 2.2.15
-        bundle install
-        rake
+      -
+        uses: actions/checkout@v2
+      -
+        name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+      -
+        name: Bundle install
+        run: |
+          bundle install
+      -
+        name: Setup Redis
+        run: |
+          docker compose -f docker-compose-github-action.yml up -d redis
+      -
+        name: Setup PostgreSQL
+        run: |
+          docker compose -f docker-compose-github-action.yml up -d postgres
+      -
+        name: Run DB migration
+        run: |
+          cd test/dummy
+          bundle exec rails db:create db:migrate
+      -
+        name: Run minitest
+        run: |
+          bundle exec rake
