@@ -51,15 +51,15 @@ Keep your data secure with multi-tenant-support. Prevent most ActiveRecord CRUD 
 5. Set `tenant_account_class_name` to your tenant account model name in `multi_tenant_support.rb`
 
     ```ruby
-    --- config.tenant_account_class_name = 'REPLACE_ME'
-    +++ config.tenant_account_class_name = 'Account'
+    - config.tenant_account_class_name = 'REPLACE_ME'
+    + config.tenant_account_class_name = 'Account'
     ```
 
 6. Set `host` to your app's domain in `multi_tenant_support.rb`
 
     ```ruby
-    --- config.host = 'REPLACE.ME'
-    +++ config.host = 'your-app-domain.com'
+    - config.host = 'REPLACE.ME'
+    + config.host = 'your-app-domain.com'
     ```
 
 7. Setup for ActiveJob or Sidekiq
@@ -67,15 +67,15 @@ Keep your data secure with multi-tenant-support. Prevent most ActiveRecord CRUD 
     If you are using ActiveJob
 
     ```ruby
-    --- # require 'multi_tenant_support/active_job'
-    +++ require 'multi_tenant_support/active_job'
+    - # require 'multi_tenant_support/active_job'
+    + require 'multi_tenant_support/active_job'
     ```
 
     If you are using sidekiq without ActiveJob
 
     ```ruby
-    --- # require 'multi_tenant_support/sidekiq'
-    +++ require 'multi_tenant_support/sidekiq'
+    - # require 'multi_tenant_support/sidekiq'
+    + require 'multi_tenant_support/sidekiq'
     ```
 
 8. Add `belongs_to_tenant` to all models which you want to scope under tenant
