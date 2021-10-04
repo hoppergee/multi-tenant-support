@@ -38,11 +38,11 @@ jobs:
       -
         name: Setup Redis
         run: |
-          docker compose -f docker-compose-github-action.yml up -d redis
+          docker-compose -f docker-compose-github-action.yml up -d redis
       -
         name: Setup PostgreSQL
         run: |
-          docker compose -f docker-compose-github-action.yml up -d postgres
+          docker-compose -f docker-compose-github-action.yml up -d postgres
       -
         name: Run DB migration
         run: |
