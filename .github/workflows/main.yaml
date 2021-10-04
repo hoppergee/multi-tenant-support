@@ -14,6 +14,7 @@ on:
       - 'MIT-LICENSE'
       - 'README.md'
       - '.gitignore'
+      - 'hero.png'
   pull_request:
     branches:
       - "*"
@@ -24,6 +25,7 @@ on:
       - 'MIT-LICENSE'
       - 'README.md'
       - '.gitignore'
+      - 'hero.png'
 
 jobs:
   test:
