@@ -8,8 +8,8 @@ services:
     volumes:
       - .:/app:cached
       - bundle_ruby_2_6:/bundle
-      - ./gemfiles/rails-6-1-Gemfile:/app/Gemfile
-      - ./gemfiles/ruby-2-6-rails-6-1-Gemfile.lock:/app/Gemfile.lock
+      - ./gemfiles/docker-compose/rails-6-1-Gemfile:/app/Gemfile
+      - ./gemfiles/docker-compose/ruby-2-6-rails-6-1-Gemfile.lock:/app/Gemfile.lock
     environment:
       BUNDLE_PATH: /bundle
       DATABASE_HOST: postgres
@@ -27,8 +27,8 @@ services:
     volumes:
       - .:/app:cached
       - bundle_ruby_2_6:/bundle
-      - ./gemfiles/rails-6-0-Gemfile:/app/Gemfile
-      - ./gemfiles/ruby-2-6-rails-6-0-Gemfile.lock:/app/Gemfile.lock
+      - ./gemfiles/docker-compose/rails-6-0-Gemfile:/app/Gemfile
+      - ./gemfiles/docker-compose/ruby-2-6-rails-6-0-Gemfile.lock:/app/Gemfile.lock
     environment:
       BUNDLE_PATH: /bundle
       DATABASE_HOST: postgres
@@ -46,8 +46,8 @@ services:
     volumes:
       - .:/app:cached
       - bundle_ruby_2_7:/bundle
-      - ./gemfiles/rails-6-1-Gemfile:/app/Gemfile
-      - ./gemfiles/ruby-2-7-rails-6-1-Gemfile.lock:/app/Gemfile.lock
+      - ./gemfiles/docker-compose/rails-6-1-Gemfile:/app/Gemfile
+      - ./gemfiles/docker-compose/ruby-2-7-rails-6-1-Gemfile.lock:/app/Gemfile.lock
     environment:
       BUNDLE_PATH: /bundle
       DATABASE_HOST: postgres
@@ -65,8 +65,8 @@ services:
     volumes:
       - .:/app:cached
       - bundle_ruby_2_7:/bundle
-      - ./gemfiles/rails-6-0-Gemfile:/app/Gemfile
-      - ./gemfiles/ruby-2-7-rails-6-0-Gemfile.lock:/app/Gemfile.lock
+      - ./gemfiles/docker-compose/rails-6-0-Gemfile:/app/Gemfile
+      - ./gemfiles/docker-compose/ruby-2-7-rails-6-0-Gemfile.lock:/app/Gemfile.lock
     environment:
       BUNDLE_PATH: /bundle
       DATABASE_HOST: postgres
@@ -84,8 +84,8 @@ services:
     volumes:
       - .:/app:cached
       - bundle_ruby_3_0:/bundle
-      - ./gemfiles/rails-6-0-Gemfile:/app/Gemfile
-      - ./gemfiles/ruby-3-0-rails-6-0-Gemfile.lock:/app/Gemfile.lock
+      - ./gemfiles/docker-compose/rails-6-0-Gemfile:/app/Gemfile
+      - ./gemfiles/docker-compose/ruby-3-0-rails-6-0-Gemfile.lock:/app/Gemfile.lock
     environment:
       BUNDLE_PATH: /bundle
       DATABASE_HOST: postgres
@@ -103,8 +103,8 @@ services:
     volumes:
       - .:/app:cached
       - bundle_ruby_3_0:/bundle
-      - ./gemfiles/rails-6-1-Gemfile:/app/Gemfile
-      - ./gemfiles/ruby-3-0-rails-6-1-Gemfile.lock:/app/Gemfile.lock
+      - ./gemfiles/docker-compose/rails-6-1-Gemfile:/app/Gemfile
+      - ./gemfiles/docker-compose/ruby-3-0-rails-6-1-Gemfile.lock:/app/Gemfile.lock
     environment:
       BUNDLE_PATH: /bundle
       DATABASE_HOST: postgres
