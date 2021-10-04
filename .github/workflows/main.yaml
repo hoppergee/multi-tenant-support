@@ -21,6 +21,7 @@ jobs:
       BUNDLE_GEMFILE: ${{ github.workspace }}/gemfiles/github-action/rails-${{ matrix.rails }}-Gemfile
       BUNDLE_PATH_RELATIVE_TO_CWD: true
       DATABASE_USERNAME: postgres
+      REDIS_HOST: '0.0.0.0'
 
     steps:
       -

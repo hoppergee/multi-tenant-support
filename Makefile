@@ -53,5 +53,6 @@ ci:
 	make test:setup
 	make db:setup
 	make test:all
+	make down
 %:
 	@:

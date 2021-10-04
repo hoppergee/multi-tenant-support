@@ -14,6 +14,7 @@ services:
       BUNDLE_PATH: /bundle
       DATABASE_HOST: postgres
       DATABASE_USERNAME: postgres
+      REDIS_HOST: redis
       CI: 1
     working_dir: /app
     depends_on:
@@ -33,6 +34,7 @@ services:
       BUNDLE_PATH: /bundle
       DATABASE_HOST: postgres
       DATABASE_USERNAME: postgres
+      REDIS_HOST: redis
       CI: 1
     working_dir: /app
     depends_on:
@@ -52,6 +54,7 @@ services:
       BUNDLE_PATH: /bundle
       DATABASE_HOST: postgres
       DATABASE_USERNAME: postgres
+      REDIS_HOST: redis
       CI: 1
     working_dir: /app
     depends_on:
@@ -71,6 +74,7 @@ services:
       BUNDLE_PATH: /bundle
       DATABASE_HOST: postgres
       DATABASE_USERNAME: postgres
+      REDIS_HOST: redis
       CI: 1
     working_dir: /app
     depends_on:
@@ -90,6 +94,7 @@ services:
       BUNDLE_PATH: /bundle
       DATABASE_HOST: postgres
       DATABASE_USERNAME: postgres
+      REDIS_HOST: redis
       CI: 1
     working_dir: /app
     depends_on:
@@ -109,6 +114,7 @@ services:
       BUNDLE_PATH: /bundle
       DATABASE_HOST: postgres
       DATABASE_USERNAME: postgres
+      REDIS_HOST: redis
       CI: 1
     working_dir: /app
     depends_on:
