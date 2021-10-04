@@ -32,7 +32,10 @@ jobs:
     strategy:
       matrix:
         ruby: ['2.6', '2.7', '3.0']
-        rails: ['6.0', '6.1']
+        rails: ['6.0', '6.1', 'master']
+        exclude: 
+          - ruby: '2.6'
+            rails: 'master'
 
     env:
       BUNDLE_GEMFILE: ${{ github.workspace }}/gemfiles/github-action/rails-${{ matrix.rails }}-Gemfile
