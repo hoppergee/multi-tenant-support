@@ -14,35 +14,6 @@ Keep your data secure with multi-tenant-support. Prevent most ActiveRecord CRUD 
 - Auto set current tenant through subdomain and domain in controller
 - Support ActiveJob and Sidekiq
 
-| Model methods                      | Protect     |
-| ---------------------------------- | ----------- |
-| count                              | 🔒           |
-| first                              | 🔒           |
-| last                               | 🔒           |
-| where                              | 🔒           |
-| find_by                            | 🔒           |
-| reload                             | 🔒           |
-| new                                | 🔒           |
-| build                              | 🔒           |
-| save, save!, save(validate: false) | 🔒           |
-| create, create!                    | 🔒           |
-| insert, insert!                    | 🔒           |
-| insert_all, insert_all!            | 🔒           |
-| `ACCOUNT=`, `ACCOUNT_ID=`          | 🔒           |
-| update                             | 🔒           |
-| update_all                         | 🔒           |
-| update_attribute                   | 🔒           |
-| update_columns                     | 🔒           |
-| update_column                      | 🔒           |
-| upsert_all                         | ⚠️ (Partial) |
-| upsert                             | 🔒           |
-| destroy, destroy!                  | 🔒           |
-| destroy_all                        | 🔒           |
-| destroy_by                         | 🔒           |
-| delete_all                         | 🔒           |
-| delete_by                          | 🔒           |
-| unscoped                           | 🔒           |
-
 ## Installation
 
 1. Add this line to your application's Gemfile:
@@ -245,6 +216,98 @@ class UsersController < ApplicationController
   end
 end
 ```
+
+
+<table>
+  <thead>
+    <tr>
+      <th colspan="8">ActiveRecord proteced methods</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>count</td>
+      <td>🔒</td>
+      <td>save</td>
+      <td>🔒</td>
+      <td>account=</td>
+      <td>🔒</td>
+      <td>upsert</td>
+      <td>🔒</td>
+    </tr>
+    <tr>
+      <td>first</td>
+      <td>🔒</td>
+      <td>save!</td>
+      <td>🔒</td>
+      <td>account_id=</td>
+      <td>🔒</td>
+      <td>destroy</td>
+      <td>🔒</td>
+    </tr>
+    <tr>
+      <td>last</td>
+      <td>🔒</td>
+      <td>create</td>
+      <td>🔒</td>
+      <td>update</td>
+      <td>🔒</td>
+      <td>destroy!</td>
+      <td>🔒</td>
+    </tr>
+    <tr>
+      <td>where</td>
+      <td>🔒</td>
+      <td>create!</td>
+      <td>🔒</td>
+      <td>update_all</td>
+      <td>🔒</td>
+      <td>destroy_all</td>
+      <td>🔒</td>
+    </tr>
+    <tr>
+      <td>find_by</td>
+      <td>🔒</td>
+      <td>insert</td>
+      <td>🔒</td>
+      <td>update_attribute</td>
+      <td>🔒</td>
+      <td>destroy_by</td>
+      <td>🔒</td>
+    </tr>
+    <tr>
+      <td>reload</td>
+      <td>🔒</td>
+      <td>insert!</td>
+      <td>🔒</td>
+      <td>update_columns</td>
+      <td>🔒</td>
+      <td>delete_all</td>
+      <td>🔒</td>
+    </tr>
+    <tr>
+      <td>new</td>
+      <td>🔒</td>
+      <td>insert_all</td>
+      <td>🔒</td>
+      <td>update_column</td>
+      <td>🔒</td>
+      <td>delete_by</td>
+      <td>🔒</td>
+    </tr>
+    <tr>
+      <td>build</td>
+      <td>🔒</td>
+      <td>insert_all!</td>
+      <td>🔒</td>
+      <td>upsert_all</td>
+      <td>⚠️ (Partial)</td>
+      <td>unscoped</td>
+      <td>🔒</td>
+    </tr>
+  </tbody>
+</table>
+
 
 ## Development
 
