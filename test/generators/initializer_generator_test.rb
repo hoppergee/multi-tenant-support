@@ -18,7 +18,7 @@ class InitializerGeneratorTest < Rails::Generators::TestCase
       end
 
       controller do |config|
-        config.current_tenant_method_name = :current_tenant_account
+        config.current_tenant_account_method = :current_tenant_account
       end
 
       app do |config|
