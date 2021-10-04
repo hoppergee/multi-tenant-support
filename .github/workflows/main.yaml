@@ -1,9 +1,6 @@
 name: Test
 
 on:
-  release:
-    type:
-      - published
   push:
     branches:
       - main
