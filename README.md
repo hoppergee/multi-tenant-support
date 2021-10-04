@@ -2,7 +2,7 @@
 
 [![Test](https://github.com/hoppergee/multi-tenant-support/actions/workflows/main.yaml/badge.svg?branch=main&event=release)](https://github.com/hoppergee/multi-tenant-support/actions/workflows/main.yaml)
 
-![](./active_record_methods_protect.png)
+![](https://raw.githubusercontent.com/hoppergee/multi-tenant-support/main/hero.png)
 
 Build a highly secure, multi-tenant rails app without data leak.
 
@@ -217,6 +217,7 @@ class UsersController < ApplicationController
 end
 ```
 
+## ActiveRecord proteced methods
 
 <table>
   <thead>
