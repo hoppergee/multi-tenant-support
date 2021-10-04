@@ -1,6 +1,6 @@
 # MultiTenantSupport
 
-[![Test](https://github.com/hoppergee/multi-tenant-support/actions/workflows/main.yaml/badge.svg?branch=main&event=release)](https://github.com/hoppergee/multi-tenant-support/actions/workflows/main.yaml)
+[![Test](https://github.com/hoppergee/multi-tenant-support/actions/workflows/main.yaml/badge.svg?branch=main)](https://github.com/hoppergee/multi-tenant-support/actions/workflows/main.yaml)
 
 ![](https://raw.githubusercontent.com/hoppergee/multi-tenant-support/main/hero.png)
 
