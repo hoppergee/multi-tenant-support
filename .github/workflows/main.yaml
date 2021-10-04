@@ -1,12 +1,29 @@
 name: Test
 
 on:
+  release:
+    type:
+      - published
   push:
     branches:
       - main
+    paths-ignore:
+      - 'CHANGELOG.md'
+      - 'docker-compose.yml'
+      - 'Makefile'
+      - 'MIT-LICENSE'
+      - 'README.md'
+      - '.gitignore'
   pull_request:
     branches:
       - "*"
+    paths-ignore:
+      - 'CHANGELOG.md'
+      - 'docker-compose.yml'
+      - 'Makefile'
+      - 'MIT-LICENSE'
+      - 'README.md'
+      - '.gitignore'
 
 jobs:
   test:
@@ -15,12 +32,16 @@ jobs:
     strategy:
       matrix:
         ruby: ['2.6', '2.7', '3.0']
-        rails: ['6.0', '6.1']
+        rails: ['6.0', '6.1', 'master']
+        exclude: 
+          - ruby: '2.6'
+            rails: 'master'
 
     env:
       BUNDLE_GEMFILE: ${{ github.workspace }}/gemfiles/github-action/rails-${{ matrix.rails }}-Gemfile
       BUNDLE_PATH_RELATIVE_TO_CWD: true
       DATABASE_USERNAME: postgres
+      REDIS_HOST: '0.0.0.0'
 
     steps:
       -
@@ -38,11 +59,11 @@ jobs:
       -
         name: Setup Redis
         run: |
-          docker compose -f docker-compose-github-action.yml up -d redis
+          docker-compose -f docker-compose-github-action.yml up -d redis
       -
         name: Setup PostgreSQL
         run: |
-          docker compose -f docker-compose-github-action.yml up -d postgres
+          docker-compose -f docker-compose-github-action.yml up -d postgres
       -
         name: Run DB migration
         run: |

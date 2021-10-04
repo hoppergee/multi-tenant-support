@@ -6,8 +6,8 @@ Gem::Specification.new do |spec|
   spec.authors     = ["Hopper Gee"]
   spec.email       = ["hopper.gee@hey.com"]
   spec.homepage    = "https://github.com/hoppergee/multi-tenant-support"
-  spec.summary     = "Multi-tenant buid on ActiveSupport::CurrentAttributes for Rails apps."
-  spec.description = "Multi-tenant buid on ActiveSupport::CurrentAttributes for Rails apps."
+  spec.summary     = "Build a highly secure, multi-tenant rails app without data leak."
+  spec.description = "Build a highly secure, multi-tenant rails app without data leak."
   spec.license     = "MIT"
 
   spec.metadata["homepage_uri"] = spec.homepage
@@ -16,5 +16,7 @@ Gem::Specification.new do |spec|
 
   spec.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.md"]
 
-  spec.add_dependency "rails", "~> 6.1.4"
+  spec.required_ruby_version = '>= 2.6'
+
+  spec.add_dependency "rails", ">= 6.0"
 end

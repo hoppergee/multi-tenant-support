@@ -14,6 +14,7 @@ services:
       BUNDLE_PATH: /bundle
       DATABASE_HOST: postgres
       DATABASE_USERNAME: postgres
+      REDIS_HOST: redis
       CI: 1
     working_dir: /app
     depends_on:
@@ -33,6 +34,27 @@ services:
       BUNDLE_PATH: /bundle
       DATABASE_HOST: postgres
       DATABASE_USERNAME: postgres
+      REDIS_HOST: redis
+      CI: 1
+    working_dir: /app
+    depends_on:
+      - postgres
+      - redis
+
+  ruby_2_7_rails_master:
+    image: ruby:2.7.4
+    tmpfs:
+      - /tmp
+    volumes:
+      - .:/app:cached
+      - bundle_ruby_2_7:/bundle
+      - ./gemfiles/docker-compose/rails-master-Gemfile:/app/Gemfile
+      - ./gemfiles/docker-compose/ruby-2-7-rails-master-Gemfile.lock:/app/Gemfile.lock
+    environment:
+      BUNDLE_PATH: /bundle
+      DATABASE_HOST: postgres
+      DATABASE_USERNAME: postgres
+      REDIS_HOST: redis
       CI: 1
     working_dir: /app
     depends_on:
@@ -52,6 +74,7 @@ services:
       BUNDLE_PATH: /bundle
       DATABASE_HOST: postgres
       DATABASE_USERNAME: postgres
+      REDIS_HOST: redis
       CI: 1
     working_dir: /app
     depends_on:
@@ -71,6 +94,7 @@ services:
       BUNDLE_PATH: /bundle
       DATABASE_HOST: postgres
       DATABASE_USERNAME: postgres
+      REDIS_HOST: redis
       CI: 1
     working_dir: /app
     depends_on:
@@ -90,6 +114,7 @@ services:
       BUNDLE_PATH: /bundle
       DATABASE_HOST: postgres
       DATABASE_USERNAME: postgres
+      REDIS_HOST: redis
       CI: 1
     working_dir: /app
     depends_on:
@@ -109,6 +134,27 @@ services:
       BUNDLE_PATH: /bundle
       DATABASE_HOST: postgres
       DATABASE_USERNAME: postgres
+      REDIS_HOST: redis
+      CI: 1
+    working_dir: /app
+    depends_on:
+      - postgres
+      - redis
+
+  ruby_3_0_rails_master:
+    image: ruby:3.0.2
+    tmpfs:
+      - /tmp
+    volumes:
+      - .:/app:cached
+      - bundle_ruby_3_0:/bundle
+      - ./gemfiles/docker-compose/rails-master-Gemfile:/app/Gemfile
+      - ./gemfiles/docker-compose/ruby-3-0-rails-master-Gemfile.lock:/app/Gemfile.lock
+    environment:
+      BUNDLE_PATH: /bundle
+      DATABASE_HOST: postgres
+      DATABASE_USERNAME: postgres
+      REDIS_HOST: redis
       CI: 1
     working_dir: /app
     depends_on:
