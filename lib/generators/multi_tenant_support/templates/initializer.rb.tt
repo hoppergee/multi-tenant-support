@@ -1,3 +1,5 @@
+require 'multi_tenant_support'
+
 MultiTenantSupport.configure do
   model do |config|
     config.tenant_account_class_name = 'REPLACE_ME'

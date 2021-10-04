@@ -11,6 +11,8 @@ class InitializerGeneratorTest < Rails::Generators::TestCase
     run_generator
     initializer_file_content = File.read("#{destination_root}/config/initializers/multi_tenant_support.rb")
     expected_content = <<~INITIALIZER
+    require 'multi_tenant_support'
+
     MultiTenantSupport.configure do
       model do |config|
         config.tenant_account_class_name = 'REPLACE_ME'
