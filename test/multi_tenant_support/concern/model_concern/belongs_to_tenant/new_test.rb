@@ -27,4 +27,16 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_NewTest < ActiveSupport:
     end
   end
 
+  test ".new - auto set tenant account on new when super admin manual set current tenant" do
+    allow_read_across_tenant do
+      under_tenant amazon do
+        kate = User.new(name: 'kate')
+        assert_equal amazon, kate.account
+
+        john = tags(:engineer).users.build
+        assert_equal amazon, john.account
+      end
+    end
+  end
+
 end
