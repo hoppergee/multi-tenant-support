@@ -1,8 +1,8 @@
 # MultiTenantSupport
 
-[![Test](https://github.com/hoppergee/multi-tenant-support/actions/workflows/main.yaml/badge.svg?branch=main)](https://github.com/hoppergee/multi-tenant-support/actions/workflows/main.yaml)
+[![Test](https://github.com/hoppergee/multi-tenant-support/actions/workflows/main.yaml/badge.svg?branch=main)](https://github.com/hoppergee/multi-tenant-support/actions/workflows/main.yaml) [![Gem Version](https://badge.fury.io/rb/multi-tenant-support.svg)](https://badge.fury.io/rb/multi-tenant-support)
 
-![](https://raw.githubusercontent.com/hoppergee/multi-tenant-support/main/hero.png) [![Gem Version](https://badge.fury.io/rb/multi-tenant-support.svg)](https://badge.fury.io/rb/multi-tenant-support)
+![](https://raw.githubusercontent.com/hoppergee/multi-tenant-support/main/hero.png)
 
 Build a highly secure, multi-tenant rails app without data leak.
 
