@@ -24,25 +24,30 @@ But it does more than them, and highly focuses on ActiveRecord data leak protect
 
 ## What make it differnce on details
 
-It protects data in every scenario in great detail.
+It protects data in every scenario in great detail. Currently, you can't find any multi-tenant gems doing a full data leak protect on ActiveRecord. But this gem does this work.
+
+
+Our protection code mainly focus on 5 scenarios:
 
 - Action by tenant
-  - current tenant exists
-  - and disallow read across tenant (default)
+  - `CurrentTenantSupport.current_tenant` exists
+  - `CurrentTenantSupport.allow_read_across_tenant` is false (default)
 - Action by wrong tenant
-  - current tenant does not match the record
-  - and disallow read across tenant (default)
+  - `CurrentTenantSupport.current_tenant` does not match `target_record.account`
+  - `CurrentTenantSupport.allow_read_across_tenant` is false (default)
 - Action when missing tenant
-  - current tenant is nil
-  - and disallow read across tenant (default)
+  - `CurrentTenantSupport.current_tenant` is nil
+  - `CurrentTenantSupport.allow_read_across_tenant` is false (default)
 - Action by super admin but readonly
-  - allow read across tenant
-  - and current tenant is nil
+  - `CurrentTenantSupport.current_tenant` is nil
+  - `CurrentTenantSupport.allow_read_across_tenant` is true
 - Action by super admin but want modify on a specific tenant
-  -  allow read across tenant
-  -  temporary set current tenant to a specific tenant
+  - `CurrentTenantSupport.current_tenant` is nil
+  - `CurrentTenantSupport.allow_read_across_tenant` is true
+  - Run code in the block of `CurrentTenantSupport.under_tenant` 
 
 
+Below are the behaviour of all ActiveRecord CRUD methods under abvove scenarios:
 
 ### Protect on read
 
