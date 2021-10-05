@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+## [1.0.4] - 2021-10-05
+
+- Rename "lib/multi_tenant_support.rb" to "lib/multi-tenant-support.rb"
+
 ## [1.0.3] - 2021-10-04
 
 - Prevent most ActiveRecord CRUD methods from acting across tenants.
