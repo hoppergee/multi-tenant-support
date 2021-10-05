@@ -76,6 +76,7 @@ class ModelCreateBySaveProtectTest < ActiveSupport::TestCase
   def assert_save(user)
     assert_difference "User.unscope_tenant.count", 1 do
       assert user.save
+      assert apple, user.account
     end
   end
 
@@ -90,6 +91,7 @@ class ModelCreateBySaveProtectTest < ActiveSupport::TestCase
   def assert_save!(user)
     assert_difference "User.unscope_tenant.count", 1 do
       assert user.save!
+      assert apple, user.account
     end
   end
 
