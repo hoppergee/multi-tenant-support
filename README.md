@@ -24,7 +24,7 @@ But it does more than them, and highly focuses on ActiveRecord data leak protect
 
 ## What make it differnce on details
 
-It protects data in every scenario in great detail. Currently, you can't find any multi-tenant gems doing a full data leak protect on ActiveRecord. But this gem does this work.
+It protects data in every scenario in great detail. Currently, you can't find any multi-tenant gems doing a full data leak protect on ActiveRecord. But this gem does it.
 
 
 Our protection code mainly focus on 5 scenarios:
