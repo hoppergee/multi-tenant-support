@@ -3,6 +3,7 @@
 ## [1.0.4] - 2021-10-05
 
 - Rename "lib/multi_tenant_support.rb" to "lib/multi-tenant-support.rb"
+- Breaking: please remove `require 'multi_tenant_support'` from the `config/initializers/multi_tenant_support.rb`
 
 ## [1.0.3] - 2021-10-04
 
