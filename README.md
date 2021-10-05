@@ -14,6 +14,132 @@ Keep your data secure with multi-tenant-support. Prevent most ActiveRecord CRUD 
 - Auto set current tenant through subdomain and domain in controller
 - Support ActiveJob and Sidekiq
 
+
+
+This gem was inspired much from [acts_as_tenant](https://github.com/ErwinM/acts_as_tenant), [multitenant](https://github.com/wireframe/multitenant), [multitenancy](https://github.com/Flipkart/multitenancy/blob/master/lib/multitenancy/model_extensions.rb), [rails-multitenant](https://github.com/salsify/rails-multitenant), [activerecord-firewall](https://github.com/Shopify/activerecord-firewall), [milia](https://github.com/jekuno/milia).
+
+But it does more than them, and highly focuses on ActiveRecord data leak protection.
+
+
+
+## What make it differnce on details
+
+It protects data in every scenario in great detail.
+
+- Action by tenant
+  - current tenant exists
+  - and disallow read across tenant (default)
+- Action by wrong tenant
+  - current tenant does not match the record
+  - and disallow read across tenant (default)
+- Action when missing tenant
+  - current tenant is nil
+  - and disallow read across tenant (default)
+- Action by super admin but readonly
+  - allow read across tenant
+  - and current tenant is nil
+- Action by super admin but want modify on a specific tenant
+  -  allow read across tenant
+  -  temporary set current tenant to a specific tenant
+
+
+
+### Protect on read
+
+
+| Read By  | tenant | missing tenant | super admin | super admin(modify on a specific tenant) |
+| -------- | ------ | -------------- | ----------- | ---------------------------------------- |
+| count    | 🍕      | 🚫              | 🌎           | 🍕                                        |
+| first    | 🍕      | 🚫              | 🌎           | 🍕                                        |
+| last     | 🍕      | 🚫              | 🌎           | 🍕                                        |
+| where    | 🍕      | 🚫              | 🌎           | 🍕                                        |
+| find_by  | 🍕      | 🚫              | 🌎           | 🍕                                        |
+| unscoped | 🍕      | 🚫              | 🌎           | 🍕                                        |
+
+🍕   scoped  &#8203; &#8203; &#8203;  🌎   &#8203;   unscoped    &#8203; &#8203; &#8203;    ✅    &#8203; allow     &#8203; &#8203; &#8203;   🚫  &#8203; disallow   &#8203; &#8203; &#8203;    ⚠️ &#8203;  Not protected
+
+<br>
+
+### Protect on initialize
+
+| Initialize by | tenant | wrong tenant | missing tenant | super admin | super admin(modify on a specific tenant) |
+| ------------------ | ------ | ------------ | -------------- | ----------- | ---------------------------------------- |
+| new                | ✅  &#8203; 🍕   | -            | 🚫              | 🚫           | ✅  &#8203; 🍕                                     |
+| build              | ✅  &#8203; 🍕   | -           | 🚫              | 🚫           | ✅  &#8203; 🍕                                     |
+| reload  | ✅ | 🚫            | 🚫              | ✅          | ✅ |
+
+🍕   scoped  &#8203; &#8203; &#8203;  🌎   &#8203;   unscoped    &#8203; &#8203; &#8203;    ✅    &#8203; allow     &#8203; &#8203; &#8203;   🚫  &#8203; disallow   &#8203; &#8203; &#8203;    ⚠️ &#8203;  Not protected
+
+<br>
+
+
+### Protect on create
+
+| create by   | tenant | wrong tenant | missing tenant | super admin | super admin(modify on a specific tenant) |
+| ----------- | ------ | ------------ | -------------- | ----------- | ---------------------------------------- |
+| save        | ✅  &#8203; 🍕   | 🚫            | 🚫              | 🚫           | ✅  &#8203; 🍕                                     |
+| save!       | ✅  &#8203; 🍕   | 🚫            | 🚫              | 🚫           | ✅  &#8203; 🍕                                     |
+| create      | ✅  &#8203; 🍕   | -            | 🚫              | 🚫           | ✅  &#8203; 🍕                                     |
+| create!     | ✅  &#8203; 🍕   | -            | 🚫              | 🚫           | ✅  &#8203; 🍕                                     |
+| insert      | ✅  &#8203; 🍕   | -            | 🚫              | 🚫           | ✅  &#8203; 🍕                                     |
+| insert!     | ✅  &#8203; 🍕   | -            | 🚫              | 🚫           | ✅  &#8203; 🍕                                     |
+| insert_all  | ✅  &#8203; 🍕   | -            | 🚫              | 🚫           | ✅  &#8203; 🍕                                     |
+| insert_all! | ✅  &#8203; 🍕   | -            | 🚫              | 🚫           | ✅  &#8203; 🍕                                     |
+
+🍕   scoped  &#8203; &#8203; &#8203;  🌎   &#8203;   unscoped    &#8203; &#8203; &#8203;    ✅    &#8203; allow     &#8203; &#8203; &#8203;   🚫  &#8203; disallow   &#8203; &#8203; &#8203;    ⚠️ &#8203;  Not protected
+
+<br>
+
+
+### Protect on tenant assign
+
+| Manual assign or update tenant by | tenant | missing tenant | super admin | super admin(modify on a specific tenant) |
+| --------------------------------- | ------ | -------------- | ----------- | ---------------------------------------- |
+| account=                          | 🚫      | 🚫              | 🚫           | 🚫                                        |
+| account_id=                       | 🚫      | 🚫              | 🚫           | 🚫                                        |
+| update(account:)                  | 🚫      | 🚫              | 🚫           | 🚫                                        |
+| update(account_id:)               | 🚫      | 🚫              | 🚫           | 🚫                                        |
+
+🍕   scoped  &#8203; &#8203; &#8203;  🌎   &#8203;   unscoped    &#8203; &#8203; &#8203;    ✅    &#8203; allow     &#8203; &#8203; &#8203;   🚫  &#8203; disallow   &#8203; &#8203; &#8203;    ⚠️ &#8203;  Not protected
+
+<br>
+
+
+### Protect on update
+
+| Update by        | tenant | wrong tenant | missing tenant | super admin | super admin(modify on a specific tenant) |
+| ---------------- | ------ | ------------ | -------------- | ----------- | ---------------------------------------- |
+| save        | ✅   | 🚫            | 🚫              | 🚫           | ✅                                      |
+| save!       | ✅   | 🚫            | 🚫              | 🚫           | ✅                                      |
+| update           | ✅      | 🚫            | 🚫              | 🚫           | ✅                                        |
+| update_all       | ✅  &#8203; 🍕   | -            | 🚫              | 🚫           | ✅  &#8203; 🍕                                     |
+| update_attribute | ✅      | 🚫            | 🚫              | 🚫           | ✅                                        |
+| update_columns   | ✅      | 🚫            | 🚫              | 🚫           | ✅                                        |
+| update_column    | ✅      | 🚫            | 🚫              | 🚫           | ✅                                        |
+| upsert_all       | ⚠️      | -            | 🚫              | ⚠️           | ⚠️                                        |
+| upsert           | ⚠️      | -            | 🚫              | ⚠️           | ⚠️                                        |
+
+🍕   scoped  &#8203; &#8203; &#8203;  🌎   &#8203;   unscoped    &#8203; &#8203; &#8203;    ✅    &#8203; allow     &#8203; &#8203; &#8203;   🚫  &#8203; disallow   &#8203; &#8203; &#8203;    ⚠️ &#8203;  Not protected
+
+<br>
+
+
+### Protect on delete
+
+| Delete by   | tenant | wrong tenant | missing tenant | super admin | super admin(modify on a specific tenant) |
+| ----------- | ------ | ------------ | -------------- | ----------- | ---------------------------------------- |
+| destroy     | ✅      | 🚫            | 🚫              | 🚫           | ✅                                        |
+| destroy!    | ✅      | 🚫            | 🚫              | 🚫           | ✅                                        |
+| destroy_all | ✅  &#8203; 🍕   | -            | 🚫              | 🚫           | ✅  &#8203; 🍕                                     |
+| destroy_by  | ✅  &#8203; 🍕   | -            | 🚫              | 🚫           | ✅  &#8203; 🍕                                     |
+| delete_all  | ✅  &#8203; 🍕   | -            | 🚫              | 🚫           | ✅  &#8203; 🍕                                     |
+| delete_by   | ✅  &#8203; 🍕   | -            | 🚫              | 🚫           | ✅  &#8203; 🍕                                     |
+
+🍕   scoped  &#8203; &#8203; &#8203;  🌎   &#8203;   unscoped    &#8203; &#8203; &#8203;    ✅    &#8203; allow     &#8203; &#8203; &#8203;   🚫  &#8203; disallow   &#8203; &#8203; &#8203;    ⚠️ &#8203;  Not protected
+
+<br>
+
+
 ## Installation
 
 1. Add this line to your application's Gemfile:
@@ -234,7 +360,7 @@ end
       <td>account=</td>
       <td>🔒</td>
       <td>upsert</td>
-      <td>🔒</td>
+      <td>⚠️ (Partial)</td>
     </tr>
     <tr>
       <td>first</td>
@@ -310,6 +436,7 @@ end
 </table>
 
 
+
 ## Development
 
 After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
@@ -323,3 +450,4 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/hopper
 ## License
 
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
+
