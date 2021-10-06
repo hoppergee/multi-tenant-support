@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+## [1.0.5] - 2021-10-06
+
+- Fix an error caused by call `helper_method` on ActionController::API
+
 ## [1.0.4] - 2021-10-05
 
 - Rename "lib/multi_tenant_support.rb" to "lib/multi-tenant-support.rb"
