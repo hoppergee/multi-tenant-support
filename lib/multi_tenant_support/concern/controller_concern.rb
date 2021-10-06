@@ -1,9 +1,10 @@
 module MultiTenantSupport
+
   module ControllerConcern
     extend ActiveSupport::Concern
 
     included do
-      helper_method MultiTenantSupport.current_tenant_account_method
+      include ViewHelper
 
       before_action :set_current_tenant_account
 
@@ -23,8 +24,18 @@ module MultiTenantSupport
       end
     end
   end
+
+  module ViewHelper
+    define_method(MultiTenantSupport.current_tenant_account_method) do
+      instance_variable_get("@#{MultiTenantSupport.current_tenant_account_method}")
+    end
+  end
 end
 
 ActiveSupport.on_load(:action_controller) do |base|
   base.include MultiTenantSupport::ControllerConcern
+end
+
+ActiveSupport.on_load(:action_view) do |base|
+  base.include MultiTenantSupport::ViewHelper
 end

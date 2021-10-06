@@ -5,4 +5,8 @@ Rails.application.routes.draw do
   namespace :super_admin do
     resource :dashboard, controller: :dashboard
   end
+
+  namespace :api do
+    resources :users
+  end
 end
