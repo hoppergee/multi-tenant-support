@@ -20,6 +20,7 @@ module MultiTenantSupport
         instance_variable_set("@#{MultiTenantSupport.current_tenant_account_method}", tenant_account)
       end
 
+      # A user can override this method, if he need a customize way
       def find_current_tenant_account
         MultiTenantSupport::FindTenantAccount.call(
           subdomains: request.subdomains,
