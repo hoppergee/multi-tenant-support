@@ -11,7 +11,7 @@ Keep your data secure with multi-tenant-support. Prevent most ActiveRecord CRUD 
 - Prevent most ActiveRecord CRUD methods from acting across tenants.
 - Support Row-level Multitenancy
 - Build on ActiveSupport::CurrentAttributes offered by rails
-- Auto set current tenant through subdomain and domain in controller
+- Auto set current tenant through subdomain and domain in controller (overrideable)
 - Support ActiveJob and Sidekiq
 
 
@@ -219,7 +219,7 @@ Below are the behaviour of all ActiveRecord CRUD methods under abvove scenarios:
 
 ## Usage
 
-#### Get current 
+### Get current 
 
 Get current tenant through:
 
@@ -227,7 +227,7 @@ Get current tenant through:
 MultiTenantSupport.current_tenant
 ```
 
-#### Switch tenant
+### Switch tenant
 
 You can switch to another tenant temporary through:
 
@@ -237,7 +237,7 @@ MultiTenantSupport.under_tenant amazon do
 end
 ```
 
-#### Disallow read across tenant by default
+### Disallow read across tenant by default
 
 This gem disallow read across tenant by default. You can check current state through:
 
@@ -245,7 +245,7 @@ This gem disallow read across tenant by default. You can check current state thr
 MultiTenantSupport.disallow_read_across_tenant?
 ```
 
-#### Allow read across tenant for super admin
+### Allow read across tenant for super admin
 
 You can turn on the permission to read records across tenant through: 
 
@@ -260,7 +260,7 @@ end
 
 You can put it in a before action in SuperAdmin's controllers
 
-#### Disallow modify records tenant
+### Disallow modify records tenant
 
 This gem disallow modify record across tenant no matter you are super admin or not.
 
@@ -274,23 +274,41 @@ If `MultiTenantSupport.current_tenant` exist, you can only modify those records 
 
 If `MultiTenantSupport.current_tenant` is missing, you cannot modify or create any tenanted records.
 
-#### Set current tenant acccount in controller by default
+### Set current tenant acccount in controller by default
 
 This gem has set a before action `set_current_tenant_account` on ActionController. It search tenant by subdomain or domain. Do remember to `skip_before_action :set_current_tenant_account` in super admin controllers.
 
 Feel free to override it, if the finder behaviour is not what you want.
 
-#### upsert_all
+### Override current tenant finder method if domain/subdomain is not the way you want
+
+You can override `find_current_tenant_account` in any controller with your own tenant finding strategy. Just make sure this method return the tenat account record or nil.
+
+For example, say you only want to find tenant with domain not subdomain. It's very simple:
+
+```ruby
+class ApplicationController < ActionController::Base
+  private
+
+  def find_current_tenant_account
+    Account.find_by(domain: request.domain)
+  end
+end
+```
+
+Then your tenant finding strategy has changed from domain/subdomain to domain only.
+
+### upsert_all
 
 Currently, we don't have a good way to protect this method. So please use `upser_all` carefully.
 
-#### Unscoped
+### Unscoped
 
 This gem has override `unscoped` to prevent the default tenant scope be scoped out. But if you really want to scope out the default tenant scope, you can use `unscope_tenant`.
 
 ## Code Example
 
-#### Database Schema
+### Database Schema
 
 ```ruby
 create_table "accounts", force: :cascade do |t|

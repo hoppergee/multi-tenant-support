@@ -1,5 +1,10 @@
 ## [Unreleased]
 
+## [1.1.0] - 2021-10-07
+
+- Make tenant finding strategy customizable
+  - Override `find_current_tenant_account` in controller
+
 ## [1.0.5] - 2021-10-06
 
 - Fix an error caused by call `helper_method` on ActionController::API

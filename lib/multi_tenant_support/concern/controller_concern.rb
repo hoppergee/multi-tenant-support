@@ -15,12 +15,17 @@ module MultiTenantSupport
       end
 
       def set_current_tenant_account
-        tenant_account = MultiTenantSupport::FindTenantAccount.call(
+        tenant_account = find_current_tenant_account
+        MultiTenantSupport::Current.tenant_account = tenant_account
+        instance_variable_set("@#{MultiTenantSupport.current_tenant_account_method}", tenant_account)
+      end
+
+      # A user can override this method, if he need a customize way
+      def find_current_tenant_account
+        MultiTenantSupport::FindTenantAccount.call(
           subdomains: request.subdomains,
           domain: request.domain
         )
-        MultiTenantSupport::Current.tenant_account = tenant_account
-        instance_variable_set("@#{MultiTenantSupport.current_tenant_account_method}", tenant_account)
       end
     end
   end
