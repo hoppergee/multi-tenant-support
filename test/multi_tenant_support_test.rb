@@ -62,6 +62,17 @@ class MultiTenantSupportTest < ActiveSupport::TestCase
     assert MultiTenantSupport.disallow_read_across_tenant?
   end
 
+  test '.allow_read_across_tenant?' do
+    MultiTenantSupport::Current.allow_read_across_tenant = nil
+    refute MultiTenantSupport.allow_read_across_tenant?
+
+    MultiTenantSupport::Current.allow_read_across_tenant = true
+    assert MultiTenantSupport.allow_read_across_tenant?
+
+    MultiTenantSupport::Current.allow_read_across_tenant = false
+    refute MultiTenantSupport.allow_read_across_tenant?
+  end
+
   test ".disallow_read_across_tenant and .allow_read_across_tenant" do
     MultiTenantSupport::Current.allow_read_across_tenant = nil
     MultiTenantSupport.disallow_read_across_tenant

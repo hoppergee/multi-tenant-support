@@ -4,6 +4,7 @@ require "multi_tenant_support/errors"
 require "multi_tenant_support/config/app"
 require "multi_tenant_support/config/controller"
 require "multi_tenant_support/config/model"
+require "multi_tenant_support/config/console"
 require "multi_tenant_support/current"
 require "multi_tenant_support/find_tenant_account"
 require "multi_tenant_support/concern/controller_concern"
@@ -31,6 +32,10 @@ module MultiTenantSupport
     Current.set(tenant_account: tenant_account) do
       yield
     end
+  end
+
+  def allow_read_across_tenant?
+    !disallow_read_across_tenant?
   end
 
   def disallow_read_across_tenant?

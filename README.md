@@ -306,6 +306,29 @@ Currently, we don't have a good way to protect this method. So please use `upser
 
 This gem has override `unscoped` to prevent the default tenant scope be scoped out. But if you really want to scope out the default tenant scope, you can use `unscope_tenant`.
 
+### Console
+
+Console does not allow read across tenant by default. But you have several ways to change that:
+
+1. Set `allow_read_across_tenant_by_default` in the initialize file
+
+    ```ruby
+    console do |config|
+      config.allow_read_across_tenant_by_default = true
+    end
+    ```
+2. Set the environment variable `ALLOW_READ_ACROSS_TENANT` when call consoel command
+
+    ```bash
+    ALLOW_READ_ACROSS_TENANT=1 rails console
+    ```
+3. Manual change it in console
+
+    ```ruby
+    $ rails c
+    $ irb(main):001:0> MultiTenantSupport.allow_read_across_tenant
+    ```
+
 ## Code Example
 
 ### Database Schema
@@ -339,6 +362,10 @@ MultiTenantSupport.configure do
   app do |config|
     config.excluded_subdomains = ['www']
     config.host = 'example.com'
+  end
+
+  console do |config|
+    config.allow_read_across_tenant_by_default = false
   end
 end
 ```

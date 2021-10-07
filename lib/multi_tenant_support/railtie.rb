@@ -9,5 +9,13 @@ module MultiTenantSupport
       config.app_generators.templates.unshift(active_record_templates)
     end
 
+    console do
+      if ENV["ALLOW_READ_ACROSS_TENANT"] || MultiTenantSupport.console.allow_read_across_tenant_by_default
+        MultiTenantSupport.allow_read_across_tenant
+      else
+        MultiTenantSupport.disallow_read_across_tenant
+      end
+    end
+
   end
 end

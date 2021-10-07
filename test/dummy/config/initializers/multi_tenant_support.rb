@@ -12,4 +12,8 @@ MultiTenantSupport.configure do |config|
     config.excluded_subdomains = ['www']
     config.host = 'example.com'
   end
+
+  console do |config|
+    config.allow_read_across_tenant_by_default = false
+  end
 end
