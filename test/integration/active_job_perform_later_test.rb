@@ -2,7 +2,7 @@ require 'test_helper'
 require 'sidekiq'
 require 'sidekiq/testing'
 
-class ActiveJobIntegrationTest < ActiveSupport::TestCase
+class ActiveJobPeroformLaterIntegrationTest < ActiveSupport::TestCase
 
   setup do
     MultiTenantSupport.under_tenant(accounts(:amazon)) do

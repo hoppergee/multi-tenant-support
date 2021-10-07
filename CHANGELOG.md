@@ -1,5 +1,13 @@
 ## [Unreleased]
 
+## [1.1.1] - 2021-10-07
+
+- Make sure all four job delivery ways work as expected
+  - MyJob.perform_now('hi')
+  - MyJob.perform_later('hi')
+  - MyJob.set(queue: 'high').perform_now('hi')
+  - MyJob.set(queue: 'high').perform_later('hi')
+
 ## [1.1.0] - 2021-10-07
 
 - Make tenant finding strategy customizable
