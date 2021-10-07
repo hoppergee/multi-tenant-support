@@ -10,7 +10,7 @@ module MultiTenantSupport
     end
 
     console do
-      if MultiTenantSupport.console.allow_read_across_tenant_by_default
+      if ENV["ALLOW_READ_ACROSS_TENANT"] || MultiTenantSupport.console.allow_read_across_tenant_by_default
         MultiTenantSupport.allow_read_across_tenant
       else
         MultiTenantSupport.disallow_read_across_tenant
