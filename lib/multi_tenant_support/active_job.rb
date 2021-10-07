@@ -8,6 +8,7 @@ module MultiTenantSupport
     end
 
     class_methods do
+
       if Gem::Version.new(Rails.version) < Gem::Version.new("7.0.0.alpha1")
         def perform_now(*args)
           job = job_or_instantiate(*args)
@@ -22,6 +23,21 @@ module MultiTenantSupport
             job.perform_now
           end
         ")
+      end
+
+      def execute(job_data)
+        keep_current_tenant_unchange do
+          super(job_data)
+        end
+      end
+
+      private
+
+      def keep_current_tenant_unchange
+        _current_tenant = MultiTenantSupport::Current.tenant_account
+        yield
+      ensure
+        MultiTenantSupport::Current.tenant_account = _current_tenant
       end
     end
 
