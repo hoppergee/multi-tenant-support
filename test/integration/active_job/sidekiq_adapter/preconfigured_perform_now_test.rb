@@ -6,7 +6,9 @@ module TestActiveJob
 
       test 'update succes update user when tenant account match' do
         under_tenant(amazon) do
-          UserNameUpdateJob.set(queue: :integration_tests).perform_now(bezos)
+          assert_no_changes 'MultiTenantSupport.current_tenant' do
+            UserNameUpdateJob.set(queue: :integration_tests).perform_now(bezos)
+          end
 
           assert_equal "Jeff Bezos UPDATE", bezos.reload.name
         end
@@ -14,8 +16,10 @@ module TestActiveJob
 
       test 'fail to update user when tenant account is missing' do
         under_tenant nil do
-          assert_raise(MultiTenantSupport::MissingTenantError) do
-          UserNameUpdateJob.set(queue: :integration_tests).perform_now(bezos)
+          assert_no_changes 'MultiTenantSupport.current_tenant' do
+            assert_raise(MultiTenantSupport::MissingTenantError) do
+              UserNameUpdateJob.set(queue: :integration_tests).perform_now(bezos)
+            end
           end
         end
 
@@ -26,8 +30,10 @@ module TestActiveJob
 
       test 'fail to update user when tenant account is not match' do
         under_tenant(apple) do
-          assert_raise(MultiTenantSupport::InvalidTenantAccess) do
-          UserNameUpdateJob.set(queue: :integration_tests).perform_now(bezos)
+          assert_no_changes 'MultiTenantSupport.current_tenant' do
+            assert_raise(MultiTenantSupport::InvalidTenantAccess) do
+              UserNameUpdateJob.set(queue: :integration_tests).perform_now(bezos)
+            end
           end
         end
 

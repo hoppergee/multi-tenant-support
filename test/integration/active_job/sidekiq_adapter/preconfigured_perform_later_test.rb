@@ -12,10 +12,12 @@ module TestActiveJob
 
       test 'update succes update user when tenant account match' do
         under_tenant(amazon) do
-          UserNameUpdateJob.set(queue: :integration_tests).perform_later(bezos)
-        end
+          assert_no_changes 'MultiTenantSupport.current_tenant' do
+            UserNameUpdateJob.set(queue: :integration_tests).perform_later(bezos)
 
-        sleep 0.5
+            sleep 0.5
+          end
+        end
 
         under_tenant(amazon) do
           assert_equal "Jeff Bezos UPDATE", bezos.reload.name
@@ -23,9 +25,11 @@ module TestActiveJob
       end
 
       test 'fail to update user when tenant account is missing on enqueue' do
-        UserNameUpdateJob.set(queue: :integration_tests).perform_later(bezos)
+        assert_no_changes 'MultiTenantSupport.current_tenant' do
+          UserNameUpdateJob.set(queue: :integration_tests).perform_later(bezos)
 
-        sleep 0.1
+          sleep 0.1
+        end
 
         Sidekiq.redis do |connection|
           retries = connection.zrange "retry", 0, -1
@@ -42,10 +46,12 @@ module TestActiveJob
 
       test 'fail to update user when tenant account is not match' do
         under_tenant(apple) do
-          UserNameUpdateJob.set(queue: :integration_tests).perform_later(bezos)
-        end
+          assert_no_changes 'MultiTenantSupport.current_tenant' do
+            UserNameUpdateJob.set(queue: :integration_tests).perform_later(bezos)
 
-        sleep 0.2
+            sleep 0.2
+          end
+        end
 
         Sidekiq.redis do |connection|
           retries = connection.zrange "retry", 0, -1
