@@ -15,11 +15,13 @@ module MultiTenantSupport
           job.perform_now
         end
       else
-        def perform_now(...)
-          job = job_or_instantiate(...)
-          job.current_tenant = MultiTenantSupport.current_tenant
-          job.perform_now
-        end
+        eval("
+          def perform_now(...)
+            job = job_or_instantiate(...)
+            job.current_tenant = MultiTenantSupport.current_tenant
+            job.perform_now
+          end
+        ")
       end
     end
 
@@ -69,11 +71,13 @@ module MultiTenantSupport
         job.perform_now
       end
     else
-      def perform_now(...)
-        job = @job_class.new(...)
-        job.current_tenant = MultiTenantSupport.current_tenant
-        job.perform_now
-      end
+      eval("
+        def perform_now(...)
+          job = @job_class.new(...)
+          job.current_tenant = MultiTenantSupport.current_tenant
+          job.perform_now
+        end
+      ")
     end
   end
 end
