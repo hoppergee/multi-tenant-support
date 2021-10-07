@@ -34,6 +34,10 @@ module MultiTenantSupport
     end
   end
 
+  def allow_read_across_tenant?
+    !disallow_read_across_tenant?
+  end
+
   def disallow_read_across_tenant?
     !Current.allow_read_across_tenant
   end
