@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+- Keep current tenant unchange around job perform with SiekiqAdapter,TestAdapter,InlineAdapter,AsyncAdapter
+
 ## [1.1.1] - 2021-10-07
 
 - Make sure all four job delivery ways work as expected
