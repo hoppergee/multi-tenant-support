@@ -1,6 +1,11 @@
 ## [Unreleased]
 
+
+## [1.2.0] - 2021-10-08
+
 - Keep current tenant unchange around job perform with SiekiqAdapter,TestAdapter,InlineAdapter,AsyncAdapter
+- Add a new console config `allow_read_across_tenant_by_default`
+- Add an environment varialbe `ALLOW_READ_ACROSS_TENANT`
 
 ## [1.1.1] - 2021-10-07
 
