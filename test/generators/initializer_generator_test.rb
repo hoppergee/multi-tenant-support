@@ -25,6 +25,10 @@ class InitializerGeneratorTest < Rails::Generators::TestCase
         config.excluded_subdomains = ['www']
         config.host = 'REPLACE.ME'
       end
+
+      console do |config|
+        config.allow_read_across_tenant_by_default = false
+      end
     end
 
     # Uncomment if you are using sidekiq without ActiveJob
