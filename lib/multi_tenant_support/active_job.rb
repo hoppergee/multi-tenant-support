@@ -1,4 +1,5 @@
 module MultiTenantSupport
+
   module ActiveJob
     extend ActiveSupport::Concern
 
@@ -59,6 +60,23 @@ module MultiTenantSupport
       tenant_klass.find tenant_id
     end
   end
+
+  module ConfiguredJob
+    if Gem::Version.new(Rails.version) < Gem::Version.new("7.0.0.alpha1")
+      def perform_now(*args)
+        job = @job_class.new(*args)
+        job.current_tenant = MultiTenantSupport.current_tenant
+        job.perform_now
+      end
+    else
+      def perform_now(...)
+        job = @job_class.new(...)
+        job.current_tenant = MultiTenantSupport.current_tenant
+        job.perform_now
+      end
+    end
+  end
 end
 
 ActiveJob::Base.include(MultiTenantSupport::ActiveJob)
+ActiveJob::ConfiguredJob.prepend(MultiTenantSupport::ConfiguredJob)
