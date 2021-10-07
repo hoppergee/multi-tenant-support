@@ -6,6 +6,22 @@ module MultiTenantSupport
       attr_accessor :current_tenant
     end
 
+    class_methods do
+      if Gem::Version.new(Rails.version) < Gem::Version.new("7.0.0.alpha1")
+        def perform_now(*args)
+          job = job_or_instantiate(*args)
+          job.current_tenant = MultiTenantSupport.current_tenant
+          job.perform_now
+        end
+      else
+        def perform_now(...)
+          job = job_or_instantiate(...)
+          job.current_tenant = MultiTenantSupport.current_tenant
+          job.perform_now
+        end
+      end
+    end
+
     def perform_now
       MultiTenantSupport.under_tenant(current_tenant) do
         super
