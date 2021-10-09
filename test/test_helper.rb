@@ -43,4 +43,4 @@ Minitest.after_run do
   )
 end
 
-require 'multi_tenant_support/test'
+require 'multi_tenant_support/minitest'

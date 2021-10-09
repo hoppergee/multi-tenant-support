@@ -27,5 +27,3 @@ module MultiTenantSupport
     end
   end
 end
-
-ActionDispatch::IntegrationTest.prepend(MultiTenantSupport::Test::Integration)

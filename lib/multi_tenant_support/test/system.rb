@@ -36,5 +36,3 @@ module MultiTenantSupport
     end
   end
 end
-
-ActionDispatch::SystemTestCase.prepend(MultiTenantSupport::Test::System)

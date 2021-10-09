@@ -55,5 +55,3 @@ module MultiTenantSupport
     end
   end
 end
-
-Capybara::Node::Element.prepend(MultiTenantSupport::Test::Capybara)
