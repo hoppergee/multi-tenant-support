@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+## [1.3.0] - 2021-10-10
+
+- Integrate with Rails default testing toolchain (Minitest + Capybara)
+- Integrate with RSpec + Capybara
 
 ## [1.2.0] - 2021-10-08
 

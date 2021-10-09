@@ -56,10 +56,13 @@ Rails.application.configure do
   # Debug mode disables concatenation and preprocessing of assets.
   # This option may cause significant delays in view rendering with a large
   # number of complex assets.
-  config.assets.debug = true
+  
+  if Gem::Version.new(Rails.version) < Gem::Version.new("7.0.0.alpha2")
+    config.assets.debug = true
 
-  # Suppress logger output for asset requests.
-  config.assets.quiet = true
+    # Suppress logger output for asset requests.
+    config.assets.quiet = true
+  end
 
   # Raises error for missing translations.
   # config.i18n.raise_on_missing_translations = true

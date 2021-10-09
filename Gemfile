@@ -10,6 +10,14 @@ group :development do
 end
 
 # To use a debugger
-gem 'byebug', group: [:development, :test]
-gem 'minitest-focus', group: [:test]
-gem 'sidekiq', group: [:test]
+group :development, :test do
+  gem 'byebug'
+  gem 'rspec'
+  gem 'rspec-rails'
+  gem 'capybara'
+  gem 'sidekiq'
+end
+
+group :test do
+  gem 'minitest-focus'
+end

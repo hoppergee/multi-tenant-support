@@ -42,3 +42,5 @@ Minitest.after_run do
     ActiveSupport::StringInquirer.new("test")
   )
 end
+
+require 'multi_tenant_support/minitest'
