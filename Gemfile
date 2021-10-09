@@ -15,4 +15,6 @@ group :test do
   gem 'minitest-focus'
   gem 'sidekiq'
   gem 'capybara'
+  gem 'rspec'
+  gem 'rspec-rails'
 end
