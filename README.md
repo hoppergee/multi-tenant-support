@@ -237,6 +237,12 @@ MultiTenantSupport.under_tenant amazon do
 end
 ```
 
+### Set current tenant global
+
+```ruby
+MultiTenantSupport::Current.tenant_account = account
+```
+
 ### Disallow read across tenant by default
 
 This gem disallow read across tenant by default. You can check current state through:
@@ -348,17 +354,19 @@ Above code will make sure the `MultiTenantSupport.current_tenant` won't accident
 With above testing requre code
 
 ```ruby
-setup do
-  MultiTenantSupport::Current.tenant_account = account
-end
-
+# Integration test
 test "a integration test" do
+  host! "apple.example.com"
+
   assert_no_changes "MultiTenantSupport.current_tenant" do
     get users_path
   end
 end
 
+# System test
 test "a system test" do
+  Capybara.app_host = "http://apple.example.com"
+
   assert_no_changes "MultiTenantSupport.current_tenant" do
     visit users_path
   end
