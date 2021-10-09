@@ -329,6 +329,42 @@ Console does not allow read across tenant by default. But you have several ways 
     $ irb(main):001:0> MultiTenantSupport.allow_read_across_tenant
     ```
 
+## Testing
+### Minitest (Rails default)
+
+```ruby
+# test/test_helper.rb
+require 'multi_tenant_support/minitet'
+```
+### RSpec (with Capybara)
+
+```ruby
+# spec/rails_helper.rb or spec/spec_helper.rb
+require 'multi_tenant_support/rspec'
+```
+
+Above code will make sure the `MultiTenantSupport.current_tenant` won't accidentally be reset during integration and system tests. For example:
+
+With above testing requre code
+
+```ruby
+setup do
+  MultiTenantSupport::Current.tenant_account = account
+end
+
+test "a integration test" do
+  assert_no_changes "MultiTenantSupport.current_tenant" do
+    get users_path
+  end
+end
+
+test "a system test" do
+  assert_no_changes "MultiTenantSupport.current_tenant" do
+    visit users_path
+  end
+end
+```
+
 ## Code Example
 
 ### Database Schema
