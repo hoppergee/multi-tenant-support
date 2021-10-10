@@ -10,10 +10,6 @@ module MultiTenantSupport
 
       private
 
-      define_method(MultiTenantSupport.current_tenant_account_method) do
-        instance_variable_get("@#{MultiTenantSupport.current_tenant_account_method}")
-      end
-
       def set_current_tenant_account
         tenant_account = find_current_tenant_account
         MultiTenantSupport::Current.tenant_account = tenant_account
@@ -31,8 +27,12 @@ module MultiTenantSupport
   end
 
   module ViewHelper
-    define_method(MultiTenantSupport.current_tenant_account_method) do
-      instance_variable_get("@#{MultiTenantSupport.current_tenant_account_method}")
+    extend ActiveSupport::Concern
+
+    included do
+      define_method(MultiTenantSupport.current_tenant_account_method) do
+        instance_variable_get("@#{MultiTenantSupport.current_tenant_account_method}")
+      end
     end
   end
 end
