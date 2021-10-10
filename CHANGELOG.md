@@ -1,5 +1,9 @@
 ## [Unreleased]
 
+## [1.3.1] - 2021-10-10
+
+- Make ViewHelper work in both controller and view
+
 ## [1.3.0] - 2021-10-10
 
 - Integrate with Rails default testing toolchain (Minitest + Capybara)
