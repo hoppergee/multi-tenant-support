@@ -13,7 +13,7 @@ class ModelUpdateColumnProtectTest < ActiveSupport::TestCase
   end
 
   test "cannot update_column when tenant is missing" do
-    disallow_read_across_tenant do
+    turn_on_full_protection do
       missing_tenant do
         refute_update_column bezos, error: MultiTenantSupport::MissingTenantError
       end
@@ -35,6 +35,14 @@ class ModelUpdateColumnProtectTest < ActiveSupport::TestCase
   test 'can update_column by super admin through manual set current tenant' do
     within_a_request_of super_admin do
       under_tenant amazon do
+        assert_update_column bezos
+      end
+    end
+  end
+
+  test 'can update_column by super admin through manual turn off protection' do
+    within_a_request_of super_admin do
+      turn_off_protection do
         assert_update_column bezos
       end
     end
