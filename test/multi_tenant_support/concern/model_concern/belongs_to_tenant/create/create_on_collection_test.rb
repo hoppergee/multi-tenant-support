@@ -13,7 +13,7 @@ class ModelCreateOnCollectionProtectTest < ActiveSupport::TestCase
   end
 
   test "cannot create when tenant is missing" do
-    disallow_read_across_tenant do
+    turn_on_full_protection do
       missing_tenant do
         refute_create MultiTenantSupport::MissingTenantError
       end
@@ -34,6 +34,17 @@ class ModelCreateOnCollectionProtectTest < ActiveSupport::TestCase
     end
   end
 
+  test 'can create by super admin through manual turn off protection' do
+    within_a_request_of super_admin do
+      turn_off_protection do
+        assert_no_difference "User.unscope_tenant.count" do
+          cook = countries(:us).users.create(name: 'Tim Cook', email: 'cook@example.com')
+          assert_equal ["Account must exist"], cook.errors.full_messages
+        end
+      end
+    end
+  end
+
   ####
   #     #create!
   ####
@@ -44,7 +55,7 @@ class ModelCreateOnCollectionProtectTest < ActiveSupport::TestCase
   end
 
   test "cannot create! when tenant is missing" do
-    disallow_read_across_tenant do
+    turn_on_full_protection do
       missing_tenant do
         refute_create! MultiTenantSupport::MissingTenantError
       end
@@ -65,6 +76,18 @@ class ModelCreateOnCollectionProtectTest < ActiveSupport::TestCase
     end
   end
 
+  test 'can create! by super admin through manual turn off protection' do
+    within_a_request_of super_admin do
+      turn_off_protection do
+        assert_no_difference "User.unscope_tenant.count" do
+          assert_raise "Account must exist" do
+            countries(:us).users.create!(name: 'Tim Cook', email: 'cook@example.com')
+          end
+        end
+      end
+    end
+  end
+
   private
 
   def assert_create
@@ -79,7 +102,7 @@ class ModelCreateOnCollectionProtectTest < ActiveSupport::TestCase
       countries(:us).users.create(name: 'Tim Cook', email: 'cook@example.com')
     end
 
-    allow_read_across_tenant do
+    as_super_admin do
       assert_equal 3, User.unscope_tenant.count
     end
   end
@@ -96,7 +119,7 @@ class ModelCreateOnCollectionProtectTest < ActiveSupport::TestCase
       countries(:us).users.create!(name: 'Tim Cook', email: 'cook@example.com')
     end
 
-    allow_read_across_tenant do
+    as_super_admin do
       assert_equal 3, User.unscope_tenant.count
     end
   end
