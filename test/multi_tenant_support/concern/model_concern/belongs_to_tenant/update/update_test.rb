@@ -13,7 +13,7 @@ class ModelUpdateProtectTest < ActiveSupport::TestCase
   end
 
   test "cannot update when tenant is missing" do
-    disallow_read_across_tenant do
+    turn_on_full_protection do
       missing_tenant do
         refute_update bezos, error: MultiTenantSupport::MissingTenantError
       end
@@ -40,6 +40,14 @@ class ModelUpdateProtectTest < ActiveSupport::TestCase
     end
   end
 
+  test 'can update by super admin through manual turn off protection' do
+    within_a_request_of super_admin do
+      turn_off_protection do
+        assert_update bezos
+      end
+    end
+  end
+
   ####
   #     #update!
   ####
@@ -50,7 +58,7 @@ class ModelUpdateProtectTest < ActiveSupport::TestCase
   end
 
   test "cannot update! when tenant is missing" do
-    disallow_read_across_tenant do
+    turn_on_full_protection do
       missing_tenant do
         refute_update! bezos, error: MultiTenantSupport::MissingTenantError
       end
@@ -72,6 +80,14 @@ class ModelUpdateProtectTest < ActiveSupport::TestCase
   test 'can update! by super admin through manual set current tenant' do
     within_a_request_of super_admin do
       under_tenant amazon do
+        assert_update! bezos
+      end
+    end
+  end
+
+  test 'can update! by super admin through manual turn off protection' do
+    within_a_request_of super_admin do
+      turn_off_protection do
         assert_update! bezos
       end
     end
