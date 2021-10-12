@@ -26,4 +26,10 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_UnscopedTest < ActiveSup
     end
   end
 
+  test ".unscoped - scope all tenants' records when turn off protection" do
+    MultiTenantSupport.turn_off_protection do
+      assert_equal 3, User.where(name: 'Jeff Bezos').unscoped.count
+    end
+  end
+
 end
