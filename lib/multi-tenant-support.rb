@@ -26,39 +26,70 @@ module MultiTenantSupport
     Current.tenant_account&.send(model.tenant_account_primary_key)
   end
 
+  def set_current_tenant(tenant)
+    Current.tenant_account = tenant
+    Current.protection_state = PROTECTED
+  end
+
   def under_tenant(tenant_account, &block)
     raise ArgumentError, "block is missing" if block.nil?
 
-    Current.set(tenant_account: tenant_account) do
+    Current.set(tenant_account: tenant_account, protection_state: PROTECTED) do
       yield
     end
   end
 
+  def without_current_tenant(&block)
+    raise ArgumentError, "block is missing" if block.nil?
+
+    Current.set(tenant_account: nil) do
+      yield
+    end
+  end
+
+  def full_protected?
+    current_tenant || Current.protection_state == PROTECTED
+  end
+
   def allow_read_across_tenant?
-    !disallow_read_across_tenant?
+    current_tenant.nil? && [PROTECTED_EXCEPT_READ, UNPROTECTED].include?(Current.protection_state)
   end
 
-  def disallow_read_across_tenant?
-    !Current.allow_read_across_tenant
+  def unprotected?
+    current_tenant.nil? && Current.protection_state == UNPROTECTED
   end
 
-  def disallow_read_across_tenant
+  def turn_off_protection
+    raise 'Cannot turn off protection, try wrap in without_current_tenant' if current_tenant
+
     if block_given?
-      Current.set(allow_read_across_tenant: false) do
+      Current.set(protection_state: UNPROTECTED) do
         yield
       end
     else
-      Current.allow_read_across_tenant = false
+      Current.protection_state = UNPROTECTED
     end
   end
 
   def allow_read_across_tenant
+    raise 'Cannot read across tenant, try wrap in without_current_tenant' if current_tenant
+
     if block_given?
-      Current.set(allow_read_across_tenant: true) do
+      Current.set(protection_state: PROTECTED_EXCEPT_READ) do
         yield
       end
     else
-      Current.allow_read_across_tenant = true
+      Current.protection_state = PROTECTED_EXCEPT_READ
+    end
+  end
+
+  def turn_on_full_protection
+    if block_given?
+      Current.set(protection_state: PROTECTED) do
+        yield
+      end
+    else
+      Current.protection_state = PROTECTED
     end
   end
 

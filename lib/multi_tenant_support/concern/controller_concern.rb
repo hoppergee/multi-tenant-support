@@ -12,7 +12,7 @@ module MultiTenantSupport
 
       def set_current_tenant_account
         tenant_account = find_current_tenant_account
-        MultiTenantSupport::Current.tenant_account = tenant_account
+        MultiTenantSupport.set_current_tenant(tenant_account)
         instance_variable_set("@#{MultiTenantSupport.current_tenant_account_method}", tenant_account)
       end
 

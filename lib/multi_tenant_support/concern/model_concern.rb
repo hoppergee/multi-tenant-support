@@ -18,7 +18,7 @@ module MultiTenantSupport
 
       def set_default_scope_under_current_tenant(foreign_key)
         default_scope lambda {
-          if MultiTenantSupport.disallow_read_across_tenant? || MultiTenantSupport.current_tenant
+          if MultiTenantSupport.full_protected?
             scope_under_current_tenant
           else
             where(nil)
@@ -37,7 +37,7 @@ module MultiTenantSupport
 
         override_unscoped = Module.new {
           define_method :unscoped do |&block|
-            if MultiTenantSupport.disallow_read_across_tenant? || MultiTenantSupport.current_tenant
+            if MultiTenantSupport.full_protected?
               block ? relation.scope_under_current_tenant.scoping { block.call } : relation.scope_under_current_tenant
             else
               super(&block)
@@ -48,13 +48,13 @@ module MultiTenantSupport
 
         override_insert_all = Module.new {
           define_method :insert_all do |attributes, **arguments|
-            raise MissingTenantError unless MultiTenantSupport.current_tenant
+            raise MissingTenantError unless MultiTenantSupport.unprotected? || MultiTenantSupport.current_tenant
 
             super(attributes, **arguments)
           end
 
           define_method :insert_all! do |attributes, **arguments|
-            raise MissingTenantError unless MultiTenantSupport.current_tenant
+            raise MissingTenantError unless MultiTenantSupport.unprotected? || MultiTenantSupport.current_tenant
 
             super(attributes, **arguments)
           end
@@ -63,7 +63,7 @@ module MultiTenantSupport
 
         override_upsert_all = Module.new {
           define_method :upsert_all do |attributes, **arguments|
-            warn "[WARNING] You are using upsert_all(or upsert) which may update records across tenants"
+            warn "[WARNING] You are using upsert_all(or upsert) which may update records across tenants" unless MultiTenantSupport.unprotected?
 
             super(attributes, **arguments)
           end
@@ -71,13 +71,16 @@ module MultiTenantSupport
         extend override_upsert_all
 
         after_initialize do |object|
-          if MultiTenantSupport.disallow_read_across_tenant? || object.new_record?
-            raise MissingTenantError unless MultiTenantSupport.current_tenant
-            raise InvalidTenantAccess if object.send(foreign_key) != MultiTenantSupport.current_tenant_id
-          end
+          next if object.new_record? && MultiTenantSupport.unprotected?
+          next if object.persisted? && MultiTenantSupport.allow_read_across_tenant?
+
+          raise MissingTenantError unless MultiTenantSupport.current_tenant
+          raise InvalidTenantAccess if object.send(foreign_key) != MultiTenantSupport.current_tenant_id
         end
 
         before_save do |object|
+          return if MultiTenantSupport.unprotected?
+
           raise MissingTenantError unless MultiTenantSupport.current_tenant
           raise NilTenantError if object.send(foreign_key).nil?
           raise InvalidTenantAccess if object.send(foreign_key) != MultiTenantSupport.current_tenant_id
@@ -85,19 +88,13 @@ module MultiTenantSupport
 
         override_update_columns_module = Module.new {
           define_method :update_columns do |attributes|
-            raise MissingTenantError unless MultiTenantSupport.current_tenant
-            raise NilTenantError if send(foreign_key).nil?
-            raise InvalidTenantAccess if send(foreign_key) != MultiTenantSupport.current_tenant_id
+            unless MultiTenantSupport.unprotected?
+              raise MissingTenantError unless MultiTenantSupport.current_tenant
+              raise NilTenantError if send(foreign_key).nil?
+              raise InvalidTenantAccess if send(foreign_key) != MultiTenantSupport.current_tenant_id
+            end
 
             super(attributes)
-          end
-
-          define_method :update_column do |name, value|
-            raise MissingTenantError unless MultiTenantSupport.current_tenant
-            raise NilTenantError if send(foreign_key).nil?
-            raise InvalidTenantAccess if send(foreign_key) != MultiTenantSupport.current_tenant_id
-
-            super(name, value)
           end
         }
 
@@ -105,8 +102,10 @@ module MultiTenantSupport
 
         override_delete = Module.new {
           define_method :delete do
-            raise MissingTenantError unless MultiTenantSupport.current_tenant
-            raise InvalidTenantAccess if send(foreign_key) != MultiTenantSupport.current_tenant_id
+            unless MultiTenantSupport.unprotected?
+              raise MissingTenantError unless MultiTenantSupport.current_tenant
+              raise InvalidTenantAccess if send(foreign_key) != MultiTenantSupport.current_tenant_id
+            end
 
             super()
           end
@@ -115,7 +114,9 @@ module MultiTenantSupport
 
         override_delete_by = Module.new {
           define_method :delete_by do |*args|
-            raise MissingTenantError unless MultiTenantSupport.current_tenant
+            unless MultiTenantSupport.unprotected?
+              raise MissingTenantError unless MultiTenantSupport.current_tenant
+            end
 
             super(*args)
           end
@@ -123,8 +124,10 @@ module MultiTenantSupport
         extend override_delete_by
 
         before_destroy do |object|
-          raise MissingTenantError unless MultiTenantSupport.current_tenant
-          raise InvalidTenantAccess if object.send(foreign_key) != MultiTenantSupport.current_tenant_id
+          unless MultiTenantSupport.unprotected?
+            raise MissingTenantError unless MultiTenantSupport.current_tenant
+            raise InvalidTenantAccess if object.send(foreign_key) != MultiTenantSupport.current_tenant_id
+          end
         end
       end
 
@@ -132,8 +135,11 @@ module MultiTenantSupport
         readonly_tenant_module = Module.new {
 
           define_method "#{tenant_name}=" do |tenant|
+            return super(tenant_account) if MultiTenantSupport.unprotected?
+
             raise NilTenantError if tenant.nil?
             raise MissingTenantError unless MultiTenantSupport.current_tenant
+
 
             if new_record? && tenant == MultiTenantSupport.current_tenant
               super tenant
@@ -143,6 +149,8 @@ module MultiTenantSupport
           end
 
           define_method "#{foreign_key}=" do |key|
+            return super(tenant_account) if MultiTenantSupport.unprotected?
+
             raise NilTenantError if key.nil?
             raise MissingTenantError unless MultiTenantSupport.current_tenant
 
@@ -170,9 +178,11 @@ ActiveSupport.on_load(:active_record) do |base|
 
   override_delete_all = Module.new {
     define_method :delete_all do
-      current_tenant_exist = MultiTenantSupport.current_tenant
-      is_global_model = !MultiTenantSupport.model.tenanted_models.include?(klass.name)
-      raise MultiTenantSupport::MissingTenantError unless current_tenant_exist || is_global_model
+      unless MultiTenantSupport.unprotected?
+        current_tenant_exist = MultiTenantSupport.current_tenant
+        is_global_model = !MultiTenantSupport.model.tenanted_models.include?(klass.name)
+        raise MultiTenantSupport::MissingTenantError unless current_tenant_exist || is_global_model
+      end
 
       super()
     end
@@ -181,9 +191,11 @@ ActiveSupport.on_load(:active_record) do |base|
 
   override_update_all = Module.new {
     define_method :update_all do |updates|
-      current_tenant_exist = MultiTenantSupport.current_tenant
-      is_global_model = !MultiTenantSupport.model.tenanted_models.include?(klass.name)
-      raise MultiTenantSupport::MissingTenantError unless current_tenant_exist || is_global_model
+      unless MultiTenantSupport.unprotected?
+        current_tenant_exist = MultiTenantSupport.current_tenant
+        is_global_model = !MultiTenantSupport.model.tenanted_models.include?(klass.name)
+        raise MultiTenantSupport::MissingTenantError unless current_tenant_exist || is_global_model
+      end
 
       super(updates)
     end

@@ -5,22 +5,18 @@ module MultiTenantSupport
       if tenant_account.is_a?(Symbol)
         raise "Unkown tenant" unless tenant_account == super_admin
   
-        allow_read_across_tenant do
-          under_tenant nil do
-            yield
-          end
+        as_super_admin do
+          yield
         end
       else
-        disallow_read_across_tenant do
-          under_tenant tenant_account do
-            yield
-          end
+        under_tenant tenant_account do
+          yield
         end
       end
     end
   
     def missing_tenant
-      under_tenant nil do
+      without_current_tenant do
         yield
       end
     end
@@ -31,8 +27,8 @@ module MultiTenantSupport
       end
     end
   
-    def disallow_read_across_tenant
-      MultiTenantSupport.disallow_read_across_tenant do
+    def turn_on_full_protection
+      MultiTenantSupport.turn_on_full_protection do
         yield
       end
     end
@@ -42,7 +38,21 @@ module MultiTenantSupport
         yield
       end
     end
-  
+
+    def without_current_tenant
+      MultiTenantSupport.without_current_tenant do
+        yield
+      end
+    end
+
+    def as_super_admin
+      without_current_tenant do
+        allow_read_across_tenant do
+          yield
+        end
+      end
+    end
+ 
     def super_admin
       :super_admin
     end
