@@ -13,7 +13,7 @@ class ModelUpdateAllOnBatchProtectTest < ActiveSupport::TestCase
   end
 
   test "cannot update_all when tenant is missing" do
-    disallow_read_across_tenant do
+    turn_on_full_protection do
       missing_tenant do
         refute_update_all MultiTenantSupport::MissingTenantError
       end
@@ -34,26 +34,30 @@ class ModelUpdateAllOnBatchProtectTest < ActiveSupport::TestCase
     end
   end
 
+  test 'can update_all by super admin through manual turn off protection' do
+    within_a_request_of super_admin do
+      turn_off_protection do
+        assert_update_all affect: 3
+      end
+    end
+  end
+
   private
 
   def assert_update_all(affect:)
     User.in_batches.update_all(name: 'NAME')
 
-    allow_read_across_tenant do
-      under_tenant nil do
-        assert_equal 3, User.count
-        assert_equal affect, User.where(name: 'NAME').count
-      end
+    as_super_admin do
+      assert_equal 3, User.count
+      assert_equal affect, User.where(name: 'NAME').count
     end
   end
 
   def refute_update_all(error)
     assert_raise(error) { User.in_batches.update_all(name: 'NAME') }
 
-    allow_read_across_tenant do
-      under_tenant nil do
-        refute User.pluck(:name).include?('NAME')
-      end
+    as_super_admin do
+      refute User.pluck(:name).include?('NAME')
     end
   end
 
