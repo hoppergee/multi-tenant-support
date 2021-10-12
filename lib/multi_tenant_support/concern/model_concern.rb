@@ -79,7 +79,7 @@ module MultiTenantSupport
         end
 
         before_save do |object|
-          return if MultiTenantSupport.unprotected?
+          next if MultiTenantSupport.unprotected?
 
           raise MissingTenantError unless MultiTenantSupport.current_tenant
           raise NilTenantError if object.send(foreign_key).nil?
