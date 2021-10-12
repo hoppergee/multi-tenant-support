@@ -13,7 +13,7 @@ class ModelUpdateAllOnGlobalRecordsProtectTest < ActiveSupport::TestCase
   end
 
   test "can update_all global records even the tenant is missing" do
-    disallow_read_across_tenant do
+    turn_on_full_protection do
       missing_tenant do
         assert_update_all_on_global_records affect: 2
       end
@@ -26,9 +26,17 @@ class ModelUpdateAllOnGlobalRecordsProtectTest < ActiveSupport::TestCase
     end
   end
 
-  test 'can update_all global records by super admin event manual set current tenant' do
+  test 'can update_all global records by super admin even manual set current tenant' do
     within_a_request_of super_admin do
       under_tenant amazon do
+        assert_update_all_on_global_records affect: 2
+      end
+    end
+  end
+
+  test 'can update_all global records by super admin even manual turn off protection' do
+    within_a_request_of super_admin do
+      turn_off_protection do
         assert_update_all_on_global_records affect: 2
       end
     end
@@ -39,8 +47,8 @@ class ModelUpdateAllOnGlobalRecordsProtectTest < ActiveSupport::TestCase
   def assert_update_all_on_global_records(affect:)
     Tag.update_all(name: 'NEW TAG NAME')
 
-    allow_read_across_tenant do
-      under_tenant nil do
+    as_super_admin do
+      without_current_tenant do
         assert_equal affect, Tag.where(name: 'NEW TAG NAME').count
       end
     end
