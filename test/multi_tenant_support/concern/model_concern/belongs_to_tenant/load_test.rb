@@ -44,4 +44,20 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_LoadTest < ActiveSupport
     end
   end
 
+  test 'initialize works for all users when allow_read_across_tennat' do
+    allow_read_across_tenant do
+      users(:steve).reload
+      users(:bezos).reload
+      users(:zuck).reload
+    end
+  end
+
+  test 'initialize works for all users when turn off protection' do
+    turn_off_protection do
+      users(:steve).reload
+      users(:bezos).reload
+      users(:zuck).reload
+    end
+  end
+
 end
