@@ -45,6 +45,12 @@ module MultiTenantSupport
       end
     end
 
+    def turn_off_protection
+      MultiTenantSupport.turn_off_protection do
+        yield
+      end
+    end
+
     def as_super_admin
       without_current_tenant do
         allow_read_across_tenant do

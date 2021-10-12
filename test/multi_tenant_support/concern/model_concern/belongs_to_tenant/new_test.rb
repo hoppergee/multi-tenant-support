@@ -39,4 +39,14 @@ class MultiTenantSupport::ModelConcern::BelongsToTenant_NewTest < ActiveSupport:
     end
   end
 
+  test ".new - success without auto set tenant account on new when turn off protection" do
+    turn_off_protection do
+      kate = User.new(name: 'kate')
+      assert kate.account.nil?
+
+      john = tags(:engineer).users.build
+      assert john.account.nil?
+    end
+  end
+
 end
