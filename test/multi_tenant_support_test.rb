@@ -51,57 +51,149 @@ class MultiTenantSupportTest < ActiveSupport::TestCase
     assert_equal facebook, MultiTenantSupport.current_tenant
   end
 
-  test '.disallow_read_across_tenant?' do
-    MultiTenantSupport::Current.allow_read_across_tenant = nil
-    assert MultiTenantSupport.disallow_read_across_tenant?
+  test '.full_protected?' do
+    MultiTenantSupport::Current.tenant_account = nil
 
-    MultiTenantSupport::Current.allow_read_across_tenant = true
-    refute MultiTenantSupport.disallow_read_across_tenant?
+    MultiTenantSupport::Current.protection_state = MultiTenantSupport::PROTECTED
+    assert MultiTenantSupport.full_protected?
+    MultiTenantSupport::Current.protection_state = MultiTenantSupport::PROTECTED_EXCEPT_READ
+    refute MultiTenantSupport.full_protected?
+    MultiTenantSupport::Current.protection_state = MultiTenantSupport::UNPROTECTED
+    refute MultiTenantSupport.full_protected?
 
-    MultiTenantSupport::Current.allow_read_across_tenant = false
-    assert MultiTenantSupport.disallow_read_across_tenant?
+    MultiTenantSupport::Current.tenant_account = amazon
+
+    MultiTenantSupport::Current.protection_state = MultiTenantSupport::PROTECTED
+    assert MultiTenantSupport.full_protected?
+    MultiTenantSupport::Current.protection_state = MultiTenantSupport::PROTECTED_EXCEPT_READ
+    assert MultiTenantSupport.full_protected?
+    MultiTenantSupport::Current.protection_state = MultiTenantSupport::UNPROTECTED
+    assert MultiTenantSupport.full_protected?
   end
 
   test '.allow_read_across_tenant?' do
-    MultiTenantSupport::Current.allow_read_across_tenant = nil
-    refute MultiTenantSupport.allow_read_across_tenant?
+    MultiTenantSupport::Current.tenant_account = nil
 
-    MultiTenantSupport::Current.allow_read_across_tenant = true
+    MultiTenantSupport::Current.protection_state = MultiTenantSupport::PROTECTED
+    refute MultiTenantSupport.allow_read_across_tenant?
+    MultiTenantSupport::Current.protection_state = MultiTenantSupport::PROTECTED_EXCEPT_READ
+    assert MultiTenantSupport.allow_read_across_tenant?
+    MultiTenantSupport::Current.protection_state = MultiTenantSupport::UNPROTECTED
     assert MultiTenantSupport.allow_read_across_tenant?
 
-    MultiTenantSupport::Current.allow_read_across_tenant = false
+    MultiTenantSupport::Current.tenant_account = amazon
+
+    MultiTenantSupport::Current.protection_state = MultiTenantSupport::PROTECTED
+    refute MultiTenantSupport.allow_read_across_tenant?
+    MultiTenantSupport::Current.protection_state = MultiTenantSupport::PROTECTED_EXCEPT_READ
+    refute MultiTenantSupport.allow_read_across_tenant?
+    MultiTenantSupport::Current.protection_state = MultiTenantSupport::UNPROTECTED
     refute MultiTenantSupport.allow_read_across_tenant?
   end
 
-  test ".disallow_read_across_tenant and .allow_read_across_tenant" do
-    MultiTenantSupport::Current.allow_read_across_tenant = nil
-    MultiTenantSupport.disallow_read_across_tenant
-    assert MultiTenantSupport.disallow_read_across_tenant?
+  test '.unprotected?' do
+    MultiTenantSupport::Current.tenant_account = nil
 
-    MultiTenantSupport.allow_read_across_tenant
-    refute MultiTenantSupport.disallow_read_across_tenant?
+    MultiTenantSupport::Current.protection_state = MultiTenantSupport::PROTECTED
+    refute MultiTenantSupport.unprotected?
+    MultiTenantSupport::Current.protection_state = MultiTenantSupport::PROTECTED_EXCEPT_READ
+    refute MultiTenantSupport.unprotected?
+    MultiTenantSupport::Current.protection_state = MultiTenantSupport::UNPROTECTED
+    assert MultiTenantSupport.unprotected?
+
+    MultiTenantSupport::Current.tenant_account = amazon
+
+    MultiTenantSupport::Current.protection_state = MultiTenantSupport::PROTECTED
+    refute MultiTenantSupport.unprotected?
+    MultiTenantSupport::Current.protection_state = MultiTenantSupport::PROTECTED_EXCEPT_READ
+    refute MultiTenantSupport.unprotected?
+    MultiTenantSupport::Current.protection_state = MultiTenantSupport::UNPROTECTED
+    refute MultiTenantSupport.unprotected?
   end
 
-  test ".disallow_read_across_tenant - accept block" do
-    MultiTenantSupport::Current.allow_read_across_tenant = true
-    refute MultiTenantSupport.disallow_read_across_tenant?
+  test ".turn_on_full_protection" do
+    MultiTenantSupport::Current.protection_state = MultiTenantSupport::PROTECTED_EXCEPT_READ
+    refute MultiTenantSupport.full_protected?
+    MultiTenantSupport.turn_on_full_protection
+    assert MultiTenantSupport.full_protected?
 
-    MultiTenantSupport.disallow_read_across_tenant do
-      assert MultiTenantSupport.disallow_read_across_tenant?
+    MultiTenantSupport::Current.protection_state = MultiTenantSupport::UNPROTECTED
+    refute MultiTenantSupport.full_protected?
+    MultiTenantSupport.turn_on_full_protection
+    assert MultiTenantSupport.full_protected?
+  end
+
+  test ".allow_read_across_tenant" do
+    MultiTenantSupport::Current.protection_state = MultiTenantSupport::PROTECTED
+    refute MultiTenantSupport.allow_read_across_tenant?
+    MultiTenantSupport.allow_read_across_tenant
+    assert MultiTenantSupport.allow_read_across_tenant?
+
+    MultiTenantSupport::Current.protection_state = MultiTenantSupport::UNPROTECTED
+    assert MultiTenantSupport.allow_read_across_tenant?
+    MultiTenantSupport.allow_read_across_tenant
+    assert MultiTenantSupport.allow_read_across_tenant?
+
+    assert_raise "Cannot read across tenant, try wrap in without_current_tenant" do
+      MultiTenantSupport.under_tenant amazon do
+        MultiTenantSupport.allow_read_across_tenant do
+          # Do something
+        end
+      end
+    end
+  end
+
+  test ".turn_off_protection" do
+    MultiTenantSupport::Current.protection_state = MultiTenantSupport::PROTECTED
+    refute MultiTenantSupport.unprotected?
+    MultiTenantSupport.turn_off_protection
+    assert MultiTenantSupport.unprotected?
+
+    MultiTenantSupport::Current.protection_state = MultiTenantSupport::PROTECTED_EXCEPT_READ
+    refute MultiTenantSupport.unprotected?
+    MultiTenantSupport.turn_off_protection
+    assert MultiTenantSupport.unprotected?
+
+    assert_raise "Cannot turn off protection, try wrap in without_current_tenant" do
+      MultiTenantSupport.under_tenant amazon do
+        MultiTenantSupport.turn_off_protection do
+          # Do something
+        end
+      end
+    end
+  end
+
+  test ".turn_on_full_protection - accept block" do
+    MultiTenantSupport::Current.protection_state = MultiTenantSupport::PROTECTED_EXCEPT_READ
+    refute MultiTenantSupport.full_protected?
+
+    MultiTenantSupport.turn_on_full_protection do
+      assert MultiTenantSupport.full_protected?
     end
 
-    refute MultiTenantSupport.disallow_read_across_tenant?
+    refute MultiTenantSupport.full_protected?
   end
 
   test ".allow_read_across_tenant - accept block" do
-    MultiTenantSupport::Current.allow_read_across_tenant = false
-    assert MultiTenantSupport.disallow_read_across_tenant?
+    MultiTenantSupport::Current.protection_state = MultiTenantSupport::PROTECTED
+    refute MultiTenantSupport.allow_read_across_tenant?
 
     MultiTenantSupport.allow_read_across_tenant do
-      refute MultiTenantSupport.disallow_read_across_tenant?
+      assert MultiTenantSupport.allow_read_across_tenant?
     end
 
-    assert MultiTenantSupport.disallow_read_across_tenant?
+    refute MultiTenantSupport.allow_read_across_tenant?
+  end
+
+  test ".turn_off_protection - accept block" do
+    MultiTenantSupport::Current.protection_state = MultiTenantSupport::PROTECTED
+    refute MultiTenantSupport.unprotected?
+
+    MultiTenantSupport.turn_off_protection do
+      assert MultiTenantSupport.unprotected?
+    end
+
+    refute MultiTenantSupport.unprotected?
   end
 
 end

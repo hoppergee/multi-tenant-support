@@ -12,7 +12,7 @@ class ModelUpsertProtectTest < ActiveSupport::TestCase
   end
 
   test "fail to upsert when tenant is missing" do
-    disallow_read_across_tenant do
+    turn_on_full_protection do
       missing_tenant do
         refute_upsert MultiTenantSupport::MissingTenantError, with_warn: "[WARNING] You are using upsert_all(or upsert) which may update records across tenants\n"
       end
@@ -33,10 +33,18 @@ class ModelUpsertProtectTest < ActiveSupport::TestCase
     end
   end
 
+  test 'will not get warn on call upsert when turn off protection' do
+    within_a_request_of super_admin do
+      turn_off_protection do
+        assert_not_protect_upsert with_warn: nil
+      end
+    end
+  end
+
   private
 
   def assert_not_protect_upsert(with_warn:)
-    allow_read_across_tenant do
+    as_super_admin do
       assert_equal 3, User.unscope_tenant.count
     end
 
@@ -46,10 +54,14 @@ class ModelUpsertProtectTest < ActiveSupport::TestCase
       User.upsert({name: 'New User', email: 'new.user@example.com', created_at: Time.current, updated_at: Time.current}, unique_by: :email)
     end
 
-    assert_includes warn_message, with_warn
+    if with_warn
+      assert_includes warn_message, with_warn
+    else
+      assert_no_match /WARNING/, warn_message
+    end
 
-    allow_read_across_tenant do
-      under_tenant nil do
+    as_super_admin do
+      without_current_tenant do
         assert_equal 4, User.unscope_tenant.count
         assert_equal 'JEFF BEZOS', bezos.reload.name
         assert_equal 'MARK ZUCKERBERG', zuck.reload.name
@@ -59,7 +71,7 @@ class ModelUpsertProtectTest < ActiveSupport::TestCase
   end
 
   def refute_upsert(error, with_warn:)
-    allow_read_across_tenant do
+    as_super_admin do
       assert_equal 3, User.unscope_tenant.count
     end
 
@@ -73,8 +85,8 @@ class ModelUpsertProtectTest < ActiveSupport::TestCase
 
     assert_includes warn_message, with_warn
 
-    allow_read_across_tenant do
-      under_tenant nil do
+    as_super_admin do
+      without_current_tenant do
         assert_equal 3, User.unscope_tenant.count
         assert_equal 'Jeff Bezos', bezos.reload.name
         assert_equal 'Mark Zuckerberg', zuck.reload.name

@@ -13,7 +13,7 @@ class ModelInsertProtectTest < ActiveSupport::TestCase
   end
 
   test "cannot insert when tenant is missing" do
-    disallow_read_across_tenant do
+    turn_on_full_protection do
       missing_tenant do
         refute_insert MultiTenantSupport::MissingTenantError
       end
@@ -34,6 +34,19 @@ class ModelInsertProtectTest < ActiveSupport::TestCase
     end
   end
 
+  test 'can insert without tenant by super admin through manual turn off protection' do
+    within_a_request_of super_admin do
+      turn_off_protection do
+        assert_difference "User.unscope_tenant.count", 1 do
+          User.insert({name: 'Tim Cook', email: 'cook@example.com', created_at: Time.current, updated_at: Time.current})
+          user = User.find_by(name: 'Tim Cook')
+          assert user.persisted?
+          assert user.account.nil?
+        end
+      end
+    end
+  end
+
   ####
   #     #insert!
   ####
@@ -44,7 +57,7 @@ class ModelInsertProtectTest < ActiveSupport::TestCase
   end
 
   test "cannot insert! when tenant is missing" do
-    disallow_read_across_tenant do
+    turn_on_full_protection do
       missing_tenant do
         refute_insert! MultiTenantSupport::MissingTenantError
       end
@@ -65,6 +78,19 @@ class ModelInsertProtectTest < ActiveSupport::TestCase
     end
   end
 
+  test 'can insert! without tenant by super admin through manual turn off protection' do
+    within_a_request_of super_admin do
+      turn_off_protection do
+        assert_difference "User.unscope_tenant.count", 1 do
+          User.insert!({name: 'Tim Cook', email: 'cook@example.com', created_at: Time.current, updated_at: Time.current})
+          user = User.find_by(name: 'Tim Cook')
+          assert user.persisted?
+          assert user.account.nil?
+        end
+      end
+    end
+  end
+
   private
 
   def assert_insert
@@ -77,7 +103,7 @@ class ModelInsertProtectTest < ActiveSupport::TestCase
   def refute_insert(error)
     assert_raise(error) { User.insert({email: 'test@test.com'}) }
 
-    allow_read_across_tenant do
+    as_super_admin do
       assert_equal 3, User.unscope_tenant.count
     end
   end
@@ -92,7 +118,7 @@ class ModelInsertProtectTest < ActiveSupport::TestCase
   def refute_insert!(error)
     assert_raise(error) { User.insert!({email: 'test@test.com'}) }
 
-    allow_read_across_tenant do
+    as_super_admin do
       assert_equal 3, User.unscope_tenant.count
     end
   end

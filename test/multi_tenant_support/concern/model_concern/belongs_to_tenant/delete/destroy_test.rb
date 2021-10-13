@@ -13,7 +13,7 @@ class ModelDestroyProtectTest < ActiveSupport::TestCase
   end
 
   test "cannot destroy when tenant is missing" do
-    disallow_read_across_tenant do
+    turn_on_full_protection do
       missing_tenant do
         refute_destroy bezos, error: MultiTenantSupport::MissingTenantError
       end
@@ -40,6 +40,14 @@ class ModelDestroyProtectTest < ActiveSupport::TestCase
     end
   end
 
+  test 'can destroy by super admin through manual turn off protection' do
+    within_a_request_of super_admin do
+      turn_off_protection do
+        assert_destroy bezos
+      end
+    end
+  end
+
   ####
   #     #destroy!
   ####
@@ -50,7 +58,7 @@ class ModelDestroyProtectTest < ActiveSupport::TestCase
   end
 
   test "cannot destroy! when tenant is missing" do
-    disallow_read_across_tenant do
+    turn_on_full_protection do
       missing_tenant do
         refute_destroy! bezos, error: MultiTenantSupport::MissingTenantError
       end
@@ -72,6 +80,14 @@ class ModelDestroyProtectTest < ActiveSupport::TestCase
   test 'can destroy! by super admin through manual set current tenant' do
     within_a_request_of super_admin do
       under_tenant amazon do
+        assert_destroy! bezos
+      end
+    end
+  end
+
+  test 'can destroy! by super admin through manual turn off protection' do
+    within_a_request_of super_admin do
+      turn_off_protection do
         assert_destroy! bezos
       end
     end

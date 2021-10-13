@@ -13,7 +13,7 @@ class ModelUpdateBySaveProtectTest < ActiveSupport::TestCase
   end
 
   test "cannot save when tenant is missing" do
-    disallow_read_across_tenant do
+    turn_on_full_protection do
       missing_tenant do
         refute_save bezos, error: MultiTenantSupport::MissingTenantError
       end
@@ -40,6 +40,14 @@ class ModelUpdateBySaveProtectTest < ActiveSupport::TestCase
     end
   end
 
+  test 'can save by super admin through manual turn off protection' do
+    within_a_request_of super_admin do
+      turn_off_protection do
+        assert_save bezos
+      end
+    end
+  end
+
   ####
   #     #save!
   ####
@@ -50,7 +58,7 @@ class ModelUpdateBySaveProtectTest < ActiveSupport::TestCase
   end
 
   test "cannot save! when tenant is missing" do
-    disallow_read_across_tenant do
+    turn_on_full_protection do
       missing_tenant do
         refute_save! bezos, error: MultiTenantSupport::MissingTenantError
       end

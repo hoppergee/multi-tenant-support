@@ -13,7 +13,7 @@ class ModelDeleteAllOnGlobalRecordsProtectTest < ActiveSupport::TestCase
   end
 
   test "can delete_all global records when the tenant is missing" do
-    disallow_read_across_tenant do
+    turn_on_full_protection do
       missing_tenant do
         assert_delete_all_on_global_records(-3)
       end
@@ -34,6 +34,13 @@ class ModelDeleteAllOnGlobalRecordsProtectTest < ActiveSupport::TestCase
     end
   end
 
+  test 'can delete_all global records by super admin event manual turn off protection' do
+    within_a_request_of super_admin do
+      turn_off_protection do
+        assert_delete_all_on_global_records(-3)
+      end
+    end
+  end
 
   private
 

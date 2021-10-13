@@ -240,18 +240,49 @@ end
 ### Set current tenant global
 
 ```ruby
-MultiTenantSupport::Current.tenant_account = account
+MultiTenantSupport.set_tenant_account(account)
 ```
 
-### Disallow read across tenant by default
-
-This gem disallow read across tenant by default. You can check current state through:
+### Temp set current tenant to nil
 
 ```ruby
-MultiTenantSupport.disallow_read_across_tenant?
+MultiTenantSupport.without_current_tenant do
+  # ...
+end
 ```
 
-### Allow read across tenant for super admin
+### 3 protection states
+
+1. `MultiTenantSupport.full_protected?`
+2. `MultiTenantSupport.allow_read_across_tenant?`
+3. `MultiTenantSupport.unprotected?`
+
+#### Full protection(default)
+
+The default state is full protection. This gem disallow modify record across tenant by default.
+
+If `MultiTenantSupport.current_tenant` exist, you can only modify those records under this tenant, otherwise, you will get some errors like:
+
+- `MultiTenantSupport::MissingTenantError`
+- `MultiTenantSupport::ImmutableTenantError`
+- `MultiTenantSupport::NilTenantError`
+- `MultiTenantSupport::InvalidTenantAccess`
+- `ActiveRecord::RecordNotFound`
+
+If `MultiTenantSupport.current_tenant` is missing, you cannot modify or create any tenanted records.
+
+If you switched to other state, you can switch back through:
+
+```ruby
+MultiTenantSupport.turn_on_full_protection
+
+# Or
+MultiTenantSupport.turn_on_full_protection do
+  # ...
+end
+```
+
+#### Allow read across tenant for super admin
 
 You can turn on the permission to read records across tenant through: 
 
@@ -266,19 +297,18 @@ end
 
 You can put it in a before action in SuperAdmin's controllers
 
-### Disallow modify records tenant
+#### Turn off protection
 
-This gem disallow modify record across tenant no matter you are super admin or not.
+Sometimes, as a super admin, we need to execute certain maintenatn operations over all tenant records. You can do this through:
 
-If `MultiTenantSupport.current_tenant` exist, you can only modify those records under this tenant, otherwise, you will get some errors like:
+```ruby
+MultiTenantSupport.turn_off_protection
 
-- `MultiTenantSupport::MissingTenantError`
-- `MultiTenantSupport::ImmutableTenantError`
-- `MultiTenantSupport::NilTenantError`
-- `MultiTenantSupport::InvalidTenantAccess`
-- `ActiveRecord::RecordNotFound`
-
-If `MultiTenantSupport.current_tenant` is missing, you cannot modify or create any tenanted records.
+# Or
+MultiTenantSupport.turn_off_protection do
+  # ...
+end
+```
 
 ### Set current tenant acccount in controller by default
 
