@@ -15,7 +15,7 @@ module TestActiveJob
       end
 
       test 'fail to update user when tenant account is missing' do
-        under_tenant nil do
+        without_current_tenant do
           assert_no_changes 'MultiTenantSupport.current_tenant' do
             assert_raise(MultiTenantSupport::MissingTenantError) do
               UserNameUpdateJob.set(queue: :integration_tests).perform_now(bezos)
