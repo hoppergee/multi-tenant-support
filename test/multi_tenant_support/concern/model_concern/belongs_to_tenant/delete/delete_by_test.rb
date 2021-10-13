@@ -13,7 +13,7 @@ class ModelDeleteByProtectTest < ActiveSupport::TestCase
   end
 
   test "cannot delete when tenant is missing" do
-    disallow_read_across_tenant do
+    turn_on_full_protection do
       missing_tenant do
         refute_delete_by name: 'Jeff Bezos', error: MultiTenantSupport::MissingTenantError
       end
@@ -40,6 +40,14 @@ class ModelDeleteByProtectTest < ActiveSupport::TestCase
     end
   end
 
+  test 'can delete by super admin through manual turn off protection' do
+    within_a_request_of super_admin do
+      turn_off_protection do
+        assert_delete_by name: 'Jeff Bezos'
+      end
+    end
+  end
+
   def assert_delete_by(condition)
     assert_difference "User.unscope_tenant.count", -1 do
       User.delete_by(condition)
@@ -55,7 +63,7 @@ class ModelDeleteByProtectTest < ActiveSupport::TestCase
       end
     end
 
-    allow_read_across_tenant do
+    as_super_admin do
       assert_equal 3, User.unscope_tenant.count
     end
   end
