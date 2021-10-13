@@ -1,5 +1,18 @@
 ## [Unreleased]
 
+#### Add
+
+- `MultiTenantSupport.set_current_tenant`
+- `MultiTenantSupport.without_current_tenant`
+- `MultiTenantSupport.full_protected?`
+- `MultiTenantSupport.unprotected?`
+- `MultiTenantSupport.turn_off_protection`
+- `MultiTenantSupport.turn_on_full_protection`
+
+#### Remove
+
+- `MultiTenantSupport.disallow_read_across_tenant?`
+
 ## [1.3.1] - 2021-10-10
 
 - Make ViewHelper work in both controller and view
