@@ -1,5 +1,7 @@
 ## [Unreleased]
 
+## [1.4.0] - 2021-10-13
+
 #### Add
 
 - `MultiTenantSupport.set_current_tenant`
