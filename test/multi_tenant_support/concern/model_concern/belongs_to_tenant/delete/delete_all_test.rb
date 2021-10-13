@@ -13,7 +13,7 @@ class ModelDeleteAllProtectTest < ActiveSupport::TestCase
   end
 
   test "fail to delete when tenant is missing" do
-    disallow_read_across_tenant do
+    turn_on_full_protection do
       missing_tenant do
         refute_delete_all MultiTenantSupport::MissingTenantError
       end
@@ -34,6 +34,14 @@ class ModelDeleteAllProtectTest < ActiveSupport::TestCase
     end
   end
 
+  test 'can delete scoped records by super admin through manual turn off protection' do
+    within_a_request_of super_admin do
+      turn_off_protection do
+        assert_delete_all(-3)
+      end
+    end
+  end
+
   def assert_delete_all(number_change)
     assert_difference "User.unscope_tenant.count", number_change do
       User.delete_all
@@ -43,7 +51,7 @@ class ModelDeleteAllProtectTest < ActiveSupport::TestCase
   def refute_delete_all(error = nil)
     assert_raise(error) { User.delete_all }
 
-    allow_read_across_tenant do
+    as_super_admin do
       assert_equal 3, User.count
     end
   end
