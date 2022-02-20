@@ -21,9 +21,11 @@ if ActiveSupport::TestCase.respond_to?(:fixture_path=)
 end
 
 require 'support/dsl'
+require 'support/asserts'
 
 class ActiveSupport::TestCase
   include MultiTenantSupport::DSL
+  include MultiTenantSupport::Asserts
 
   self.use_transactional_tests = false
 
