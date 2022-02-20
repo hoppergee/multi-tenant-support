@@ -1,5 +1,10 @@
 ## [Unreleased]
 
+## [1.5.0] - 2022-02-21
+
+- Support Rails >= 6.1 only
+- Test with [matrixeval-ruby](https://github.com/MatrixEval/matrixeval-ruby)
+
 ## [1.4.0] - 2021-10-13
 
 #### Add
