@@ -1,4 +1,4 @@
-class AddCountryIdToUsers < ActiveRecord::Migration[6.1]
+class AddCountryIdToUsers < ActiveRecord::Migration[ENV['MIGRATION_VESRION']]
   def change
     add_reference :users, :country
   end

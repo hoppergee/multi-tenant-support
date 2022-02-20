@@ -30,14 +30,15 @@ jobs:
     name: ruby-${{ matrix.ruby }} ${{ matrix.rails }}
     strategy:
       matrix:
-        ruby: ['2.6', '2.7', '3.0']
-        rails: ['6.0', '6.1', 'master']
+        ruby: ['2.6', '2.7', '3.0', '3.1']
+        rails: ['6.1', '7.0']
         exclude: 
           - ruby: '2.6'
-            rails: 'master'
+            rails: '7.0'
 
     env:
-      BUNDLE_GEMFILE: ${{ github.workspace }}/gemfiles/github-action/rails-${{ matrix.rails }}-Gemfile
+      MIGRATION_VESRION: ${{ matrix.rails }}
+      RAILS_VERSION: ~> ${{ matrix.rails }}.0
       BUNDLE_PATH_RELATIVE_TO_CWD: true
       DATABASE_USERNAME: postgres
       REDIS_HOST: '0.0.0.0'

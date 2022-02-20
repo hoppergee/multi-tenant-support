@@ -14,25 +14,27 @@ module TestActiveJob
         under_tenant(amazon) do
           assert_no_changes 'MultiTenantSupport.current_tenant' do
             UserNameUpdateJob.set(queue: :integration_tests).perform_later(bezos)
-
-            sleep 0.5
           end
         end
 
         under_tenant(amazon) do
-          assert_equal "Jeff Bezos UPDATE", bezos.reload.name
+          multi_attempt_assert("Failed to update Bezos's name") do
+            "Jeff Bezos UPDATE" == bezos.reload.name
+          end
         end
       end
 
       test 'fail to update user when tenant account is missing on enqueue' do
         assert_no_changes 'MultiTenantSupport.current_tenant' do
           UserNameUpdateJob.set(queue: :integration_tests).perform_later(bezos)
-
-          sleep 0.1
         end
 
         Sidekiq.redis do |connection|
-          retries = connection.zrange "retry", 0, -1
+          retries = []
+          wait_until do
+            retries = connection.zrange "retry", 0, -1
+            !retries.nil?
+          end
           assert 1, retries.count
           failed_job_data = JSON.parse(retries.last)
           assert_equal "Error while trying to deserialize arguments: MultiTenantSupport::MissingTenantError", failed_job_data["error_message"]
@@ -48,13 +50,15 @@ module TestActiveJob
         under_tenant(apple) do
           assert_no_changes 'MultiTenantSupport.current_tenant' do
             UserNameUpdateJob.set(queue: :integration_tests).perform_later(bezos)
-
-            sleep 0.2
           end
         end
 
         Sidekiq.redis do |connection|
-          retries = connection.zrange "retry", 0, -1
+          retries = []
+          wait_until do
+            retries = connection.zrange "retry", 0, -1
+            !retries.nil?
+          end
           assert 1, retries.count
           failed_job_data = JSON.parse(retries.last)
           assert_equal %Q{Error while trying to deserialize arguments: Couldn't find User with 'id'=#{bezos.id} [WHERE "users"."account_id" = $1]}, failed_job_data["error_message"]

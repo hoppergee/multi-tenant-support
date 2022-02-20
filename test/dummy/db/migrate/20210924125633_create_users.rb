@@ -1,4 +1,4 @@
-class CreateUsers < ActiveRecord::Migration[6.1]
+class CreateUsers < ActiveRecord::Migration[ENV['MIGRATION_VESRION']]
   def change
     create_table :users do |t|
       t.string :name

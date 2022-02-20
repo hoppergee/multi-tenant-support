@@ -1,4 +1,4 @@
-class CreateUserTags < ActiveRecord::Migration[6.1]
+class CreateUserTags < ActiveRecord::Migration[ENV['MIGRATION_VESRION']]
   def change
     create_table :user_tags do |t|
       t.belongs_to :account, null: false

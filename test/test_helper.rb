@@ -1,5 +1,6 @@
 # Configure Rails Environment
 ENV["RAILS_ENV"] = "test"
+ENV['MIGRATION_VESRION'] ||= '6.1'
 require "minitest/autorun"
 require "minitest/focus"
 
@@ -21,9 +22,11 @@ if ActiveSupport::TestCase.respond_to?(:fixture_path=)
 end
 
 require 'support/dsl'
+require 'support/asserts'
 
 class ActiveSupport::TestCase
   include MultiTenantSupport::DSL
+  include MultiTenantSupport::Asserts
 
   self.use_transactional_tests = false
 
