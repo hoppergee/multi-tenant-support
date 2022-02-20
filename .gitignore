@@ -5,11 +5,14 @@
 /tmp/
 /test/dummy/db/*.sqlite3
 /test/dummy/db/*.sqlite3-*
+/test/dummy/db/schema.rb
 /test/dummy/log/*.log
 /test/dummy/storage/
 /test/dummy/tmp/
 .byebug_history
 Gemfile.lock
 /test/generators/tmp/
-/gemfiles/**/*Gemfile.lock
 .DS_Store
+.matrixeval/docker-compose
+.matrixeval/gemfile_locks
+.matrixeval/schema

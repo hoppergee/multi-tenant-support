@@ -1,4 +1,4 @@
-class CreateAccounts < ActiveRecord::Migration[6.1]
+class CreateAccounts < ActiveRecord::Migration[ENV['MIGRATION_VESRION']]
   def change
     create_table :accounts do |t|
       t.column :name, :string

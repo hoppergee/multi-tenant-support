@@ -1,0 +1,82 @@
+version: 0.3
+target: ruby
+project_name: multi-tenant-support
+parallel_workers: number_of_processors
+# commands:
+#   - ps
+#   - top
+#   - an_additional_command
+# mounts:
+#   - /a/path/need/to/mount:/a/path/mount/to
+env:
+  DATABASE_HOST: postgres
+  DATABASE_USERNAME: postgres
+  REDIS_HOST: redis
+  CI: 1
+matrix:
+  ruby:
+    variants:
+      - key: 2.6
+        container:
+          image: ruby:2.6.9
+      - key: 2.7
+        container:
+          image: ruby:2.7.5
+      - key: 3.0
+        default: true
+        container:
+          image: ruby:3.0.3
+      - key: 3.1
+        container:
+          image: ruby:3.1.0
+      # - key: jruby-9.3
+      #   container:
+      #     image: jruby:9.3
+      #     env:
+      #       PATH: "/opt/jruby/bin:/app/bin:/bundle/bin:$PATH"
+
+  rails:
+    variants:
+      - key: 6.1
+        default: true
+        env:
+          RAILS_VERSION: "~> 6.1.0"
+          MIGRATION_VESRION: '6.1'
+        mounts:
+          - .matrixeval/schema/rails_6_1.rb:/app/test/dummy/db/schema.rb
+      - key: 7.0
+        env:
+          RAILS_VERSION: "~> 7.0.0"
+          MIGRATION_VESRION: '7.0'
+        mounts:
+          - .matrixeval/schema/rails_7_0.rb:/app/test/dummy/db/schema.rb
+  # another:
+  #   variants:
+  #     - key: key1
+  #       default: true
+  #       env:
+  #         ENV_KEY: 1
+  #     - key: key2
+  #       env:
+  #         ENV_KEY: 2
+
+exclude:
+  - ruby: 2.6
+    rails: 7.0
+  # - ruby: jruby-9.3
+  #   rails: 7.0
+
+docker-compose-extend:
+  services:
+    postgres:
+      image: postgres:12.8
+      volumes:
+        - postgres12:/var/lib/postgresql/data
+      environment:
+        POSTGRES_HOST_AUTH_METHOD: trust
+
+    redis:
+      image: redis:6.2-alpine
+
+  volumes:
+    postgres12:

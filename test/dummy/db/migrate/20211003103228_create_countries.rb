@@ -1,4 +1,4 @@
-class CreateCountries < ActiveRecord::Migration[6.1]
+class CreateCountries < ActiveRecord::Migration[ENV['MIGRATION_VESRION']]
   def change
     create_table :countries do |t|
       t.string :code

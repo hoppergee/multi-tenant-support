@@ -1,4 +1,4 @@
-class CreateTags < ActiveRecord::Migration[6.1]
+class CreateTags < ActiveRecord::Migration[ENV['MIGRATION_VESRION']]
   def change
     create_table :tags do |t|
       t.string :name
