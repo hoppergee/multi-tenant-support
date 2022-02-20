@@ -1,5 +1,6 @@
 # Configure Rails Environment
 ENV["RAILS_ENV"] = "test"
+ENV['MIGRATION_VESRION'] ||= '6.1'
 require "minitest/autorun"
 require "minitest/focus"
 
