@@ -1,4 +1,4 @@
-version: 0.3
+version: 0.4
 target: ruby
 project_name: multi-tenant-support
 parallel_workers: number_of_processors
