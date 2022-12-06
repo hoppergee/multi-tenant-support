@@ -299,7 +299,7 @@ You can put it in a before action in SuperAdmin's controllers
 
 #### Turn off protection
 
-Sometimes, as a super admin, we need to execute certain maintenatn operations over all tenant records. You can do this through:
+Sometimes, as a super admin, we need to execute certain maintenance operations over all tenant records. You can do this through:
 
 ```ruby
 MultiTenantSupport.turn_off_protection
