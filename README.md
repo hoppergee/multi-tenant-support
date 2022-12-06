@@ -44,7 +44,7 @@ Our protection code mainly focus on 5 scenarios:
 - Action by super admin but want modify on a specific tenant
   - `CurrentTenantSupport.current_tenant` is nil
   - `CurrentTenantSupport.allow_read_across_tenant` is true
-  - Run code in the block of `CurrentTenantSupport.under_tenant` 
+  - Run code in the block of `CurrentTenantSupport.under_tenant`
 
 
 Below are the behaviour of all ActiveRecord CRUD methods under abvove scenarios:
@@ -219,7 +219,7 @@ Below are the behaviour of all ActiveRecord CRUD methods under abvove scenarios:
 
 ## Usage
 
-### Get current 
+### Get current
 
 Get current tenant through:
 
@@ -284,7 +284,7 @@ end
 
 #### Allow read across tenant for super admin
 
-You can turn on the permission to read records across tenant through: 
+You can turn on the permission to read records across tenant through:
 
 ```ruby
 MultiTenantSupport.allow_read_across_tenant
@@ -299,7 +299,7 @@ You can put it in a before action in SuperAdmin's controllers
 
 #### Turn off protection
 
-Sometimes, as a super admin, we need to execute certain maintenatn operations over all tenant records. You can do this through:
+Sometimes, as a super admin, we need to execute certain maintenance operations over all tenant records. You can do this through:
 
 ```ruby
 MultiTenantSupport.turn_off_protection
@@ -574,4 +574,3 @@ Bug reports and pull requests are welcome on GitHub at https://github.com/hopper
 ## License
 
 The gem is available as open source under the terms of the [MIT License](https://opensource.org/licenses/MIT).
-
